@@ -82,8 +82,8 @@ function calculateFOV() {
 }
 
 function updateResults(horizontalFOV, verticalFOV) {
-    document.getElementById('horizontalFOV').textContent = Math.round(horizontalFOV);
-    document.getElementById('verticalFOV').textContent = Math.round(verticalFOV);
+    document.getElementById('horizontalFOV').textContent = Math.round(horizontalFOV) + '°';
+    document.getElementById('verticalFOV').textContent = Math.round(verticalFOV) + '°';
     document.getElementById('resultsSection').style.display = 'block';
 }
 

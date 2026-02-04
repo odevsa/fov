@@ -53,7 +53,7 @@ async function updatePageLanguage() {
     document.documentElement.lang = lang;
     document.getElementById('headerTitle').textContent = '🎮 ' + (trans.title || 'FOV Calculator');
     document.getElementById('headerSubtitle').textContent = trans.subtitle || '';
-    document.getElementById('settingsTitle').textContent = (trans.settings ? '⚙️ ' + trans.settings : '⚙️ Settings');
+    document.getElementById('settingsTitle').textContent = '🖥️ ' + (trans.settings || 'Settings');
     document.getElementById('screenRatioLabel').textContent = trans.screenRatio || 'Screen Ratio';
     document.getElementById('screenSizeLabel').textContent = trans.screenSize || 'Screen Size';
     const inchesUnitEl = document.getElementById('inchesUnit');
@@ -78,20 +78,13 @@ async function updatePageLanguage() {
     const bezel = document.getElementById('bezelLabel');
     if (bezel) bezel.textContent = trans.bezelThickness || 'Bezel Thickness';
     const info = document.getElementById('infoText');
-    if (info && trans.tip) {
-        const tipParts = trans.tip.split(':');
-        info.innerHTML = '<span class="info-icon">i</span><strong>' + (tipParts[0] || 'Tip') + ':</strong> ' + (tipParts[1] || '');
-    }
+    if (info && trans.tip) info.innerHTML = trans.tip;
     const resultsTitle = document.getElementById('resultsTitle');
-    if (resultsTitle) resultsTitle.textContent = (trans.results ? '📊 ' + trans.results : '📊 Results');
+    if (resultsTitle) resultsTitle.textContent = '📊 ' + (trans.results || 'Results');
     const hLabel = document.getElementById('horizontalFOVLabel');
     if (hLabel) hLabel.textContent = trans.horizontalFov || 'Horizontal FOV';
     const vLabel = document.getElementById('verticalFOVLabel');
     if (vLabel) vLabel.textContent = trans.verticalFov || 'Vertical FOV';
-    const deg1 = document.getElementById('degreesUnit1');
-    if (deg1) deg1.textContent = trans.degrees || 'degrees';
-    const deg2 = document.getElementById('degreesUnit2');
-    if (deg2) deg2.textContent = trans.degrees || 'degrees';
     const langSelect = document.getElementById('languageSelect');
     if (langSelect) langSelect.value = lang;
 }

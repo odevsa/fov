@@ -2,6 +2,10 @@
 
 Calculate horizontal and vertical field of view for racing simulators with support for single/triple screen setups and curved monitors.
 
+## Online
+
+https://odevsa.github.io/fov/
+
 ## Quick Start
 
 ```bash

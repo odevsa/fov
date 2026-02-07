@@ -51,6 +51,7 @@ function calculateFOV() {
     const curved = document.getElementById('curvedScreen').checked;
     const radius = parseInt(document.getElementById('curveRadius').value) / 10;
     const bezel = (parseFloat(document.getElementById('bezelThickness').value) || 0) / 10;
+    const carType = document.getElementById('carType').value;
 
     const fov = FOV.calculate({ratio, size, distance, screens, curved, radius, bezel});
     updateResults(fov);
@@ -61,6 +62,7 @@ function calculateFOV() {
         tripleScreenAngle: fov.angle,
         screenCurveRadius: curved ? radius : undefined,
         distance: distance,
+        car: `img/${carType}.png`
     });
 }
 
@@ -147,6 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('distance').addEventListener('input', calculateFOV);
     document.getElementById('curveRadius').addEventListener('input', calculateFOV);
     document.getElementById('bezelThickness').addEventListener('input', calculateFOV);
+    document.getElementById('carType').addEventListener('change', calculateFOV);
 
     calculateFOV();
 });

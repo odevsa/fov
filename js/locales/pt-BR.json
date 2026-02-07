@@ -30,6 +30,7 @@
   "fovValue": "Valor FOV",
   "errorRequired": "Por favor, preencha todos os campos obrigatórios",
   "tip": "Dica: A distância até a tela é a medida do seu olho até o centro da tela. Para começar, tente medir a distância aproximada e ajustar conforme necessário para conforto.",
+  "carType": "Tipo de Carro",
   "darkMode": "Modo Escuro",
   "language": "Idioma",
   "select": "Selecione..."

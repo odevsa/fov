@@ -30,6 +30,7 @@
   "fovValue": "Valeur FOV",
   "errorRequired": "Veuillez remplir tous les champs obligatoires",
   "tip": "Conseil : La distance à l'écran est mesurée de votre œil au centre de l'écran. Essayez de mesurer la distance approximative et ajustez selon vos besoins de confort.",
+  "carType": "Type de voiture",
   "darkMode": "Mode sombre",
   "language": "Langue",
   "select": "Sélectionner..."

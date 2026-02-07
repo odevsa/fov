@@ -78,6 +78,8 @@ async function updatePageLanguage() {
     if (bezel) bezel.textContent = trans.bezelThickness || 'Bezel Thickness';
     const info = document.getElementById('infoText');
     if (info && trans.tip) info.innerHTML = trans.tip;
+    const carType = document.getElementById('carTypeLabel');
+    if (carType && trans.tip) carType.innerHTML = trans.carType || 'Car Type';
     const hLabel = document.getElementById('horizontalFOVLabel');
     if (hLabel) hLabel.textContent = trans.horizontalFov || 'Horizontal FOV';
     const vLabel = document.getElementById('verticalFOVLabel');

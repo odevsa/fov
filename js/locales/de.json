@@ -30,6 +30,7 @@
   "fovValue": "FOV-Wert",
   "errorRequired": "Bitte füllen Sie alle erforderlichen Felder aus",
   "tip": "Tipp: Der Abstand zum Bildschirm wird von Ihrem Auge zur Mitte des Bildschirms gemessen. Versuchen Sie, die ungefähre Entfernung zu messen und passen Sie sie nach Bedarf an.",
+  "carType": "Fahrzeugtyp",
   "darkMode": "Dunkler Modus",
   "language": "Sprache",
   "select": "Wählen Sie..."

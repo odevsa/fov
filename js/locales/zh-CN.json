@@ -30,6 +30,7 @@
   "fovValue": "FOV值",
   "errorRequired": "请填写所有必需字段",
   "tip": "提示：到屏幕的距离从眼睛测量到屏幕的中心。尝试测量大约距离，根据舒适度需要进行调整。",
+  "carType": "车型",
   "darkMode": "深色模式",
   "language": "语言",
   "select": "选择..."

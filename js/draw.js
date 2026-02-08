@@ -4,15 +4,16 @@ const ctx = canvas.getContext('2d');
 const SETTINGS = {
     debug: false,
     debugColor: 'rgba(255, 0, 0, 0.15)',
-    userColor: 'rgb(144, 237, 90)',
+    userColor: 'rgb(255, 255, 0)',
     userRadius: 20,
-    screenThickness: 5,
-    screenColor: 'rgb(0, 255, 0)',
-    fovBackground: 'rgba(0, 255, 0, 0.25)',
-    fovLines: 'rgb(150, 150, 150)',
+    screenThickness: 10,
+    screenColor: 'rgb(255, 255, 0)',
+    fovBackground: 'rgba(0, 255, 0, 0.15)',
+    fovMultiplier: 10,
+    fovLines: 'rgb(0, 255, 0)',
     fovLinesThickness: 3,
     fontSize: 22,
-    carOpacity: 0.75,
+    carOpacity: 1,
 };
 
 function updateDraw(params) {
@@ -24,11 +25,11 @@ function updateDraw(params) {
 
     drawView(
         'Horizontal FOV',
+        { x: 10, y: 30 }, 
         {
             x: car.x + (carType.offset.horizontal.x * carType.scale),
             y: car.topY - (carType.offset.horizontal.y * carType.scale)
         },
-        { x: 10, y: 30 }, 
         horizontal, 
         distance, 
         screenAmount, 
@@ -40,11 +41,11 @@ function updateDraw(params) {
     
     drawView(
         'Vertical FOV', 
+        { x: 10, y: canvas.height /2 + 30 }, 
         {
             x: car.x + (carType.offset.vertical.x * carType.scale),
             y: car.bottomY - (carType.offset.vertical.y * carType.scale)
         },
-        { x: 10, y: canvas.height /2 + 30 }, 
         vertical, 
         distance, 
         1,
@@ -60,62 +61,67 @@ function updateDraw(params) {
     }
 }
 
-function drawView(label, centerPos, labelPos, fov, dist, amount, angle, radius, scale, rotation) {
-    const d = dist * scale;
-    const r = radius ? radius * scale : null;
+function drawView(label, labelPos, centerPos, fov, distance, screenAmount, tripleScreenAngle, screenCurveRadius, scale, rotation) {
+    const scaledDistance = distance * scale;
+    const scaledRadius = screenCurveRadius * scale;
     
-    ctx.save();
-    ctx.fillStyle = '#FFF';
-    ctx.font = `${SETTINGS.fontSize}px Arial`;
-    ctx.fillText(label, labelPos.x, labelPos.y);
-    ctx.restore();
-
-
     ctx.save();
     ctx.translate(centerPos.x, centerPos.y);
     if (rotation) ctx.rotate(rotation);
     
-    drawFOV(fov, d);
-    drawScreens(amount, angle, d, r, fov, scale);
+    drawFOV(fov, scaledDistance);
+    drawScreens(screenAmount, tripleScreenAngle, scaledDistance, scaledRadius, fov, scale);
     drawUserPosition();
+    ctx.restore();
+
+    ctx.save();
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
+    ctx.fillRect(labelPos.x - 10, labelPos.y - 30, 170, 45);
+    ctx.fillRect(labelPos.x - 10, labelPos.y - 30, canvas.width, 2);
+
+    ctx.fillStyle = 'rgb(255, 255, 255)';
+    ctx.font = `${SETTINGS.fontSize}px Arial`;
+    ctx.fillText(label, labelPos.x, labelPos.y);
     ctx.restore();
 }
 
 
-function drawCar(src) {
-    const carImg = new Image();
-    carImg.src = src;
-    carImg.onload = () => {
-        const imgWidth = carImg.naturalWidth;
-        const imgHeight = carImg.naturalHeight;
+function drawCar(imageUrl) {
+    const carImage = new Image();
+    carImage.src = imageUrl;
+
+    carImage.onload = () => {
+        const imageWidth = carImage.naturalWidth;
+        const imageHeight = carImage.naturalHeight;
         const canvasWidth = canvas.width;
         const canvasHeight = canvas.height;
 
-        const scale = Math.min(canvasWidth / imgWidth, canvasHeight / imgHeight);
+        const scale = Math.min(canvasWidth / imageWidth, canvasHeight / imageHeight);
         
-        const x = (canvasWidth - imgWidth * scale) / 2;
-        const y = (canvasHeight - imgHeight * scale) / 2;
+        const x = (canvasWidth - imageWidth * scale) / 2;
+        const y = (canvasHeight - imageHeight * scale) / 2;
 
         ctx.save();
         ctx.setTransform(1, 0, 0, 1, 0, 0); 
         ctx.globalAlpha = SETTINGS.carOpacity;
         ctx.globalCompositeOperation = 'destination-over';
-        ctx.drawImage(carImg, x, y, imgWidth * scale, imgHeight * scale);
+        ctx.drawImage(carImage, x, y, imageWidth * scale, imageHeight * scale);
         ctx.restore();        
     };
 }
 
-
-function drawFOV(fov, d) {
-    const rad = (fov * Math.PI) / 180;
-    const halfFov = rad / 2;
-    const x = d * Math.tan(halfFov);
+function drawFOV(fov, distance) {
+    const fovRadians = (fov * Math.PI) / 180;
+    const halfFovRadians = fovRadians / 2;
+    const baseX = distance * Math.tan(halfFovRadians);
+    const drawX = baseX * SETTINGS.fovMultiplier;
+    const drawDistance = distance * SETTINGS.fovMultiplier;
 
     ctx.fillStyle = SETTINGS.fovBackground;
     ctx.beginPath();
     ctx.moveTo(0, 0);
-    ctx.lineTo(-x, -d);
-    ctx.lineTo(x, -d);
+    ctx.lineTo(-drawX, -drawDistance);
+    ctx.lineTo(drawX, -drawDistance);
     ctx.closePath();
     ctx.fill();
     
@@ -124,40 +130,41 @@ function drawFOV(fov, d) {
     ctx.setLineDash([5, 5]);
     ctx.beginPath();
     ctx.moveTo(0, 0);
-    ctx.lineTo(-x, -d);
+    ctx.lineTo(-drawX, -drawDistance);
     ctx.moveTo(0, 0);
-    ctx.lineTo(x, -d);
+    ctx.lineTo(drawX, -drawDistance);
     ctx.stroke();
+    
     ctx.setLineDash([]);
 }
 
-function drawScreens(amount, sideAngle, d, r, fov, scale) {
+function drawScreens(amount, sideAngle, distance, screenCurveRadius, fov, scale) {
     ctx.strokeStyle = SETTINGS.screenColor;
     ctx.lineWidth = SETTINGS.screenThickness;
     
     if (amount === 3) {
         const radCenter = ((fov / 3) * Math.PI) / 180;
-        const screenWidth = 2 * d * Math.tan(radCenter / 2);
+        const screenWidth = 2 * distance * Math.tan(radCenter / 2);
         const halfWidth = screenWidth / 2;
         const sideRad = (sideAngle * Math.PI) / 180;
         
-        drawScreenSegment(0, -d, screenWidth, r);
+        drawScreenSegment(0, -distance, screenWidth, screenCurveRadius);
         
         ctx.save();
-        ctx.translate(-halfWidth, -d);
+        ctx.translate(-halfWidth, -distance);
         ctx.rotate(-sideRad);
-        drawScreenSegment(-halfWidth, 0, screenWidth, r);
+        drawScreenSegment(-halfWidth, 0, screenWidth, screenCurveRadius);
         ctx.restore();
         
         ctx.save();
-        ctx.translate(halfWidth, -d);
+        ctx.translate(halfWidth, -distance);
         ctx.rotate(sideRad);
-        drawScreenSegment(halfWidth, 0, screenWidth, r);
+        drawScreenSegment(halfWidth, 0, screenWidth, screenCurveRadius);
         ctx.restore();
     } else {
         const rad = (fov * Math.PI) / 180;
-        const screenWidth = 2 * d * Math.tan(rad / 2);
-        drawScreenSegment(0, -d, screenWidth, r);
+        const screenWidth = 2 * distance * Math.tan(rad / 2);
+        drawScreenSegment(0, -distance, screenWidth, screenCurveRadius);
         
         if(SETTINGS.debug)
             console.log('Screen Size', screenWidth / scale)

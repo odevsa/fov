@@ -47,15 +47,23 @@ function updateDraw(params) {
 }
 
 function saveDraw() {
-    const image = canvas.toDataURL("image/jpeg", 0.8);
+    ctx.save();
+    ctx.globalCompositeOperation = 'destination-over';
+    ctx.fillStyle = "#161d26"; // Mude aqui para a cor que quiser
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.restore();
+
+    const image = canvas.toDataURL("image/png");
     
     const link = document.createElement('a');
-    link.download = 'fov.jpg';
+    link.download = 'fov.png';
     link.href = image;
     
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+
+    calculateFOV();
 }
 
 function drawCarImage(carType) {

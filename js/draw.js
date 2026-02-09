@@ -47,10 +47,10 @@ function updateDraw(params) {
 }
 
 function saveDraw() {
-    const image = canvas.toDataURL("image/png");
+    const image = canvas.toDataURL("image/jpeg", 0.8);
     
     const link = document.createElement('a');
-    link.download = 'fov-calculator-setup.png';
+    link.download = 'fov.jpg';
     link.href = image;
     
     document.body.appendChild(link);

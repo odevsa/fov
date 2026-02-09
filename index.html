@@ -52,6 +52,20 @@
         <div class="content">
             <div class="section">
                 <div class="form-group">
+                    <label id="screenTypeLabel">Setup Type</label>
+                    <div class="radio-group">
+                        <div class="radio-option" for="singleScreen">
+                            <input type="radio" id="singleScreen" name="screenType" value="single">
+                            <label for="singleScreen">⎚<br /><span id="singleScreenLabel">Single Screen</span></label>
+                        </div>
+                        <div class="radio-option" for="tripleScreen">
+                            <input type="radio" id="tripleScreen" name="screenType" value="triple" checked>
+                            <label for="tripleScreen">⎚⎚⎚<br /><span id="tripleScreenLabel">Triple Screen</span></label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
                     <label for="screenRatio" id="screenRatioLabel">Screen Ratio</label>
                     <select id="screenRatio">
                         <option value="16:9" selected>16:9</option>
@@ -66,9 +80,12 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="screenSize" id="screenSizeLabel">Screen Size</label>
+                    <label for="screenSize" id="screenSizeLabel">
+                        Screen Size
+                    </label>
                     <div class="input-wrapper">
-                        <input type="number" id="screenSize" placeholder="32" min="1" step="1" value="32" oninput="calculateFOV()">
+                        <span class="unit" id="screenSizeOutput">&nbsp;</span>
+                        <input type="range" id="screenSize" min="10" max="100" step="0.5" value="32" oninput="calculateFOV()">
                         <span class="unit" id="inchesUnit">inches</span>
                     </div>
                 </div>
@@ -76,7 +93,8 @@
                 <div class="form-group">
                     <label id="distanceLabel">Distance to Screen</label>
                     <div class="input-wrapper">
-                        <input type="number" id="distance" placeholder="50" min="1" max="200" step="1" value="60" oninput="calculateFOV()">
+                        <span class="unit" id="distanceOutput">&nbsp;</span>
+                        <input type="range" id="distance" min="35" max="200" step="1" value="60" oninput="calculateFOV()">
                         <select id="distanceUnit">
                             <option value="cm">cm</option>
                             <option value="inch">inches</option>
@@ -84,31 +102,14 @@
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label id="screenTypeLabel">Setup Type</label>
-                    <div class="radio-group">
-                        <div class="radio-option" for="singleScreen">
-                            <input type="radio" id="singleScreen" name="screenType" value="single" checked>
-                            <label for="singleScreen">⎚<br /><span id="singleScreenLabel">Single Screen</span></label>
-                        </div>
-                        <div class="radio-option" for="tripleScreen">
-                            <input type="radio" id="tripleScreen" name="screenType" value="triple">
-                            <label for="tripleScreen">⎚⎚⎚<br /><span id="tripleScreenLabel">Triple Screen</span></label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="curvedScreen">
-                        <label for="curvedScreen" id="curvedScreenLabel">Curved Screen</label>
-                    </div>
-                </div>
-
-                <div class="form-group hidden" id="radiusGroup">
-                    <label for="curveRadius" id="radiusLabel">Curve Radius</label>
+                <div class="form-group" id="radiusGroup">
+                    <label for="curvedScreenRadius" id="curvedScreenRadiusOutputLabel">Curved Screen</label>
                     <div class="input-wrapper">
-                        <input type="number" id="curveRadius" placeholder="1500" min="100" max="3000" step="10" value="1500" oninput="calculateFOV()">
+                        <div class="unit">
+                            <span id="curvedScreenRadiusOutput"></span>
+                            <span id="curvedScreenRadiusOutputFlat">Flat</span>
+                        </div>
+                        <input type="range" id="curvedScreenRadius" min="400" max="3000" step="100" value="0">
                         <span class="unit">mm</span>
                     </div>
                 </div>
@@ -116,7 +117,8 @@
                 <div class="form-group hidden" id="bezelGroup">
                     <label for="bezelThickness" id="bezelLabel">Bezel Thickness for Triple Screen</label>
                     <div class="input-wrapper">
-                        <input type="number" id="bezelThickness" placeholder="0" min="0" max="100" step="1" value="0" oninput="calculateFOV()">
+                        <span class="unit" id="bezelThicknessOutput">&nbsp;</span>
+                        <input type="range" id="bezelThickness" min="0" max="100" step="1" value="0">
                         <span class="unit">mm</span>
                     </div>
                 </div>
@@ -138,7 +140,10 @@
                     </select>
                 </div>
 
-                <canvas class="draw" width="800" height="800" id="draw"></canvas>
+                <div class="draw-container">
+                    <button class="save" onclick="saveDraw()">💾</button>
+                    <canvas class="draw" width="800" height="800" id="draw"></canvas>
+                </div>
 
                 <div class="results-section" id="resultsSection">
                     <div class="results-row">
@@ -164,6 +169,13 @@
                 </div>
             </div>
         </div>
+        
+        <footer class="footer">
+            <a href="https://github.com/odevsa/fov" target="_blank" rel="noopener noreferrer">
+                <svg height="24" viewBox="0 0 16 16" width="24" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+                <span>github.com/odevsa/fov</span>
+            </a>
+        </footer>
     </div>
 
     <script src="js/translations.js"></script>

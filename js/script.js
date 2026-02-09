@@ -13,6 +13,7 @@ const GAMES = {
 
 const CARS = {
     drift: {
+        ref: 'drift',
         image: `img/drift.png`,
         car: { width: 169, height: 129, length: 452 },
         scale: 1.75,
@@ -22,6 +23,7 @@ const CARS = {
         },
     },
     gt3: {
+        ref: 'gt3',
         image: `img/gt3.png`,
         car: { width: 185.2, height: 127.9, length: 457.3 },
         scale: 1.725,
@@ -31,6 +33,7 @@ const CARS = {
         },
     },
     f1: {
+        ref: 'f1',
         image: `img/f1.png`,
         scale: 1.45,
         car: { width: 190, height: 110, length: 545.0 },
@@ -41,8 +44,10 @@ const CARS = {
     },
 }
 
-function parseRatio(ratioStr) {
-    const parts = ratioStr.trim().split(':');
+function parseRatio(ratio) {
+    if (!ratio) return null;
+
+    const parts = ratio.trim().split(':');
     if (parts.length !== 2) return;
 
     const h = parseFloat(parts[0]);
@@ -53,47 +58,64 @@ function parseRatio(ratioStr) {
     return { h, v };
 }
 
-function getRatio() {
-    const ratio = document.getElementById('screenRatio').value;
-    if (!ratio || !screenSize) return null;
-    return parseRatio(ratio);
-}
-
-function getSize() {
-    return parseFloat(document.getElementById('screenSize').value);
-}
-
-function getDistance() {
-    const distance = parseFloat(document.getElementById('distance').value);
-    const unit = document.getElementById('distanceUnit').value;
-    
+function getDistance(distance, unit) {
     if (!distance || isNaN(distance)) return;
     
     return unit === 'inch' ? distance * INCH_TO_CM : distance;
 }
 
-
 function calculateFOV() {
-    const ratio = getRatio();
-    const size = getSize();
-    const distance = getDistance();
-    const screens = document.getElementById('tripleScreen').checked ? 3 : 1;
-    const curved = document.getElementById('curvedScreen').checked;
-    const radius = parseInt(document.getElementById('curveRadius').value) / 10;
-    const bezel = (parseFloat(document.getElementById('bezelThickness').value) || 0) / 10;
-    const carType = document.getElementById('carType').value;
+    const form = getForm();
+    const ratio = parseRatio(form.ratio);
+    const distance = getDistance(form.distance, form.distanceUnit);
 
-    const fov = FOV.calculate({ratio, size, distance, screens, curved, radius, bezel});
+    const fov = FOV.calculate({
+        ratio,
+        size: form.size,
+        distance,
+        screens: form.screens,
+        curved: form.curved,
+        radius: form.radius / 10,
+        bezel: form.bezel / 10,
+    });
+
+    updateForm(form);
     updateResults(fov);
     updateDraw({
+        ratio,
+        size: form.size,
         horizontal: fov.horizontal, 
         vertical: fov.vertical,
-        screenAmount: screens,
+        screenAmount: form.screens,
         tripleScreenAngle: fov.angle,
-        screenCurveRadius: curved ? radius : undefined,
+        curvedScreenRadius: form.curved ? form.radius / 10 : undefined,
         distance: distance,
-        carType: CARS[carType],
+        carType: CARS[form.car],
     });
+}
+
+function getForm() {
+    return {
+        ratio: document.getElementById('screenRatio').value,
+        size: parseFloat(document.getElementById('screenSize').value),
+        distanceUnit: document.getElementById('distanceUnit').value,
+        distance: parseFloat(document.getElementById('distance').value),
+        screens: document.getElementById('tripleScreen').checked ? 3 : 1,
+        curved: parseInt(document.getElementById('curvedScreenRadius').value) >= 500,
+        radius: parseInt(document.getElementById('curvedScreenRadius').value),
+        bezel: parseInt(document.getElementById('bezelThickness').value),
+        car: document.getElementById('carType').value,
+    };
+}
+
+function updateForm(form) {
+    document.getElementById('screenSizeOutput').textContent = form.size.toFixed(1);
+    document.getElementById('distanceOutput').textContent = form.distance;
+    document.getElementById('curvedScreenRadiusOutput').textContent = form.radius;
+    document.getElementById('bezelThicknessOutput').textContent = form.bezel;
+
+    document.getElementById('curvedScreenRadiusOutput').style = `display: ${form.radius >= 500 ? 'inline' : 'none'};`;
+    document.getElementById('curvedScreenRadiusOutputFlat').style = `display: ${form.radius < 500 ? 'inline' : 'none'};`;        
 }
 
 function gameHtml(label, value) {
@@ -135,12 +157,6 @@ function updateResults(fov) {
     });
 }
 
-function toggleCurveRadius() {
-    const isCurved = document.getElementById('curvedScreen').checked;
-    document.getElementById('radiusGroup').classList.toggle('hidden', !isCurved);
-    calculateFOV();
-}
-
 function toggleBezel() {
     const isTriple = document.getElementById('tripleScreen').checked;
     document.getElementById('bezelGroup').classList.toggle('hidden', !isTriple);
@@ -168,18 +184,16 @@ function convertDistanceUnit() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('curvedScreen').addEventListener('change', toggleCurveRadius);
     document.getElementById('tripleScreen').addEventListener('change', toggleBezel);
     document.getElementById('singleScreen').addEventListener('change', toggleBezel);
     document.getElementById('distanceUnit').addEventListener('change', convertDistanceUnit);
-    document.getElementById('curveRadius').addEventListener('input', toggleCurveRadius);
-    
     document.getElementById('screenRatio').addEventListener('change', calculateFOV);
+    document.getElementById('carType').addEventListener('change', calculateFOV);
+
     document.getElementById('screenSize').addEventListener('input', calculateFOV);
     document.getElementById('distance').addEventListener('input', calculateFOV);
-    document.getElementById('curveRadius').addEventListener('input', calculateFOV);
+    document.getElementById('curvedScreenRadius').addEventListener('input', calculateFOV);
     document.getElementById('bezelThickness').addEventListener('input', calculateFOV);
-    document.getElementById('carType').addEventListener('change', calculateFOV);
 
     calculateFOV();
 });

@@ -214,6 +214,12 @@ input[type="number"] {
     font-weight: 500;
 }
 
+input[type="range"] {
+    flex-grow: 1;
+    cursor: pointer;
+    margin: 0 15px;
+}
+
 .unit {
     padding: 12px 15px;
     background: var(--bg-tertiary);
@@ -266,7 +272,6 @@ input[type="checkbox"] {
     border-color: var(--accent-primary-active);
 }
 
-/*hide radion button */
 .radio-option input[type="radio"] {
     display: none;
 }
@@ -331,12 +336,36 @@ button {
     border-color: var(--accent-primary);
 }
 
-.draw {
+.draw-container {
+    position: relative;
+}
+
+.draw-container .draw {
     width: 100%;
     background: var(--bg-secondary);
+    background-size: cover;
     border-radius: 15px;
-    margin-top: 20px;
     border: 2px solid var(--border-light);
+}
+
+.draw-container .save {
+    position: absolute;
+    right: 0;
+    top: 0;
+    color: var(--text-primary);
+    background-color: var(--bg-tertiary);
+    border: 2px solid var(--border-color);
+    padding: 15px;
+    border-radius: 15px;
+    border-top-left-radius: 0;
+    border-bottom-right-radius: 0;
+    opacity: 0.5;
+}
+
+.draw-container .save:hover {
+    background-color: var(--accent-primary);
+    border: 2px solid var(--accent-primary-active);
+    opacity: 1;
 }
 
 .results-section {
@@ -414,6 +443,24 @@ button {
     margin-right: 8px;
     font-size: 0.8rem;
     font-weight: bold;
+}
+
+.footer {
+    text-align: center;
+}
+
+.footer a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: opacity 0.3s;
+    font-family: sans-serif;
+}
+
+.footer a:hover {
+    color: var(--accent-primary);
 }
 
 @media (max-width: 900px) {

@@ -70,10 +70,10 @@ async function updatePageLanguage() {
     if (single) single.textContent = trans.singleScreen || 'Single Screen';
     const triple = document.getElementById('tripleScreenLabel');
     if (triple) triple.textContent = trans.tripleScreen || 'Triple Screen';
-    const curved = document.getElementById('curvedScreenLabel');
-    if (curved) curved.textContent = trans.curvedScreen || 'Curved Screen';
-    const radius = document.getElementById('radiusLabel');
-    if (radius) radius.textContent = trans.curveRadius || 'Curve Radius';
+    const flat = document.getElementById('curvedScreenRadiusOutputFlat');
+    if (flat) flat.textContent = trans.curvedScreenFlat || 'Flat';
+    const radius = document.getElementById('curvedScreenRadiusOutputLabel');
+    if (radius) radius.textContent = trans.curvedScreenRadius || 'Curve Radius';
     const bezel = document.getElementById('bezelLabel');
     if (bezel) bezel.textContent = trans.bezelThickness || 'Bezel Thickness';
     const info = document.getElementById('infoText');

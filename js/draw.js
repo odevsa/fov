@@ -36,13 +36,16 @@ function updateDraw(params) {
     }
 
     drawCarImage(carType);
-    drawHorizontalFov(ratio, size, carPosition, carType, horizontal, distance, unit, screenAmount, tripleScreenAngle, curvedScreenRadius);
-    drawVerticalFov(ratio, size, carPosition, carType, vertical, distance, unit);
+    drawHorizontalFov(ratio, size, carPosition, carType, width, horizontal, distance, unit, screenAmount, tripleScreenAngle, curvedScreenRadius);
+    drawVerticalFov(ratio, size, carPosition, carType, height, vertical, distance, unit);
     
     
     if(SETTINGS.debug) {
-        console.log(carType);
         drawCarBox(carPosition);
+        
+        console.log('car', carType);
+        console.log(`Screen Width: ${width.toFixed(1)} cm`)
+        console.log(`Screen Height: ${height.toFixed(1)} cm`)
     }
 }
 
@@ -93,10 +96,9 @@ function drawCarImage(carType) {
     ctx.font = `${SETTINGS.fontSize}px Arial`;
     ctx.fillText("https://odevsa.github.io/fov", canvas.width - 10, canvas.height - 10);
     ctx.restore();
-
 }
 
-function drawHorizontalFov(ratio, size, carPosition, carType, fov, distance, unit, screenAmount, tripleScreenAngle, curvedScreenRadius) {
+function drawHorizontalFov(ratio, size, carPosition, carType, screenSize, fov, distance, unit, screenAmount, tripleScreenAngle, curvedScreenRadius) {
     const position = {
         x: carPosition.x + (carType.offset.horizontal.x * carType.scale),
         y: carPosition.topY - (carType.offset.horizontal.y * carType.scale)
@@ -105,6 +107,7 @@ function drawHorizontalFov(ratio, size, carPosition, carType, fov, distance, uni
 
     drawView(
         position,
+        screenSize,
         fov, 
         distance, 
         screenAmount, 
@@ -118,7 +121,7 @@ function drawHorizontalFov(ratio, size, carPosition, carType, fov, distance, uni
     drawViewLabel('Horizontal FOV', { x: 10, y: 30 });
 }
 
-function drawVerticalFov(ratio, size, carPosition, carType, fov, distance, unit) {
+function drawVerticalFov(ratio, size, carPosition, carType, screenSize, fov, distance, unit) {
     const position = {
         x: carPosition.x + (carType.offset.vertical.x * carType.scale),
         y: carPosition.bottomY - (carType.offset.vertical.y * carType.scale)
@@ -127,6 +130,7 @@ function drawVerticalFov(ratio, size, carPosition, carType, fov, distance, unit)
 
     drawView(
         position,
+        screenSize, 
         fov, 
         distance, 
         1,
@@ -137,10 +141,11 @@ function drawVerticalFov(ratio, size, carPosition, carType, fov, distance, unit)
     );
 
     drawMeasurements(position, ratio, size, fov, distance, unit, carType.scale, rotation);
-    drawViewLabel('Vertical FOV', { x: 10, y: canvas.height /2 + 30 });
+    drawViewLabel('Vertical FOV', { x: 10, y: (canvas.height / 2) + 30 });
 }
 
-function drawView(center, fov, distance, screenAmount, tripleScreenAngle, curvedScreenRadius, scale, rotation) {
+function drawView(center, screenSize, fov, distance, screenAmount, tripleScreenAngle, curvedScreenRadius, scale, rotation) {
+    const scaledScreenSize = screenSize * scale;
     const scaledDistance = distance * scale;
     const scaledRadius = curvedScreenRadius * scale;
     
@@ -149,7 +154,7 @@ function drawView(center, fov, distance, screenAmount, tripleScreenAngle, curved
     if (rotation) ctx.rotate(rotation);
     
     drawFOV(fov, scaledDistance, screenAmount == 3);
-    drawScreens(screenAmount, tripleScreenAngle, scaledDistance, scaledRadius, fov, scale);
+    drawScreens(screenAmount, scaledScreenSize, tripleScreenAngle, scaledDistance, scaledRadius);
     drawUserPosition();
     ctx.restore();
 }
@@ -168,7 +173,7 @@ function drawViewLabel(label, position) {
 
 function drawMeasurements(position, ratio, size, fov, distance, unit, scale, rotation) {
     const displayDistance = Math.round(unit == 'inch' ? distance / INCH_TO_CM : distance);
-    const displayUnit = unit == 'inch' ? '"' : unit;
+    const displayUnit = unit == 'inch' ? '"' : ` ${unit}`;
 
     ctx.save();
     ctx.translate(position.x, position.y);
@@ -254,34 +259,28 @@ function drawFOV(fov, distance, isTripleScree) {
     ctx.setLineDash([]);
 }
 
-function drawScreens(amount, sideAngle, distance, curvedScreenRadius, fov, scale) {
+function drawScreens(amount, screenSize, sideAngle, distance, curvedScreenRadius) {
     ctx.strokeStyle = SETTINGS.screenColor;
     ctx.lineWidth = SETTINGS.screenThickness;
     
-    const radCenter = ((fov / amount) * Math.PI) / 180;
-    const screenWidth = 2 * distance * Math.tan(radCenter / 2);
-
-    drawScreenSegment(0, -distance, screenWidth, curvedScreenRadius);
+    drawScreenSegment(0, -distance, screenSize, curvedScreenRadius);
 
     if (amount === 3) {
-        const halfWidth = screenWidth / 2;
+        const halfWidth = screenSize / 2;
         const sideRad = (sideAngle * Math.PI) / 180;
-        
+
         ctx.save();
         ctx.translate(-halfWidth, -distance);
         ctx.rotate(-sideRad);
-        drawScreenSegment(-halfWidth, 0, screenWidth, curvedScreenRadius);
+        drawScreenSegment(-halfWidth, 0, screenSize, curvedScreenRadius);
         ctx.restore();
         
         ctx.save();
         ctx.translate(halfWidth, -distance);
         ctx.rotate(sideRad);
-        drawScreenSegment(halfWidth, 0, screenWidth, curvedScreenRadius);
+        drawScreenSegment(halfWidth, 0, screenSize, curvedScreenRadius);
         ctx.restore();
     }
-
-    if(SETTINGS.debug)
-        console.log('Screen Size', screenWidth / scale)
 }
 
 function drawScreenSegment(xCenter, yCenter, width, r) {

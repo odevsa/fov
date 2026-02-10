@@ -40,7 +40,7 @@
 			const hAngle = curved
 				? this._calcCurvedAngle(width, radius, distance)
 				: this._calcTriangularAngle(width, distance);
-			const vAngle = 2 * Math.atan2(Math.tan(hAngle / 2) * ratio.v, ratio.h);
+			const vAngle = 2 * Math.atan2(Math.tan(this._calcTriangularAngle(width, distance) / 2) * ratio.v, ratio.h);
 			
 			return {
 				horizontal: parseFloat((this.ARC_CONSTANT * (hAngle * screens)).toFixed(2)),

@@ -37,10 +37,11 @@
 			const bezelCalculated = bezel * 2;
 			const aspectRatioToSize = Math.sqrt((screensizeDiagonal * screensizeDiagonal) / ((ratio.h * ratio.h) + (ratio.v * ratio.v)));
 			const width = (ratio.h * aspectRatioToSize) + (screens > 1 ? bezelCalculated : 0);
+			const hActualAngle = this._calcTriangularAngle(width, distance);
 			const hAngle = curved
 				? this._calcCurvedAngle(width, radius, distance)
 				: this._calcTriangularAngle(width, distance);
-			const vAngle = 2 * Math.atan2(Math.tan(this._calcTriangularAngle(width, distance) / 2) * ratio.v, ratio.h);
+			const vAngle = 2 * Math.atan2(Math.tan(hActualAngle / 2) * ratio.v, ratio.h);
 			
 			return {
 				horizontal: parseFloat((this.ARC_CONSTANT * (hAngle * screens)).toFixed(2)),

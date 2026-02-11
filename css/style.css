@@ -233,7 +233,7 @@ input[type="range"] {
     border-radius: 8px;
     border: 2px solid var(--border-color);
     font-weight: 500;
-    color: var(--text-secondary);
+    color: var(--text-primary);
     white-space: nowrap;
 }
 
@@ -245,7 +245,7 @@ input[type="range"] {
     border-radius: 8px;
     border: 2px solid var(--border-color);
     font-weight: 500;
-    color: var(--text-secondary);
+    color: var(--text-primary);
     white-space: nowrap;
 }
 

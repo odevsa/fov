@@ -28,23 +28,22 @@ function calculateFOV() {
         size: form.size,
         distance,
         screens: form.screens,
-        curved: form.curved,
-        radius: form.radius / 10,
+        screenRadius: form.screenRadius ? form.screenRadius / 10 : undefined,
         bezel: form.bezel / 10,
     });
 
     updateForm(form);
     updateResults(fov);
     updateDraw({
-        ratio,
-        size: form.size,
+        ratio: fov.ratio,
+        size: fov.size,
         width: fov.width, 
         height: fov.height,
         horizontal: fov.horizontal, 
         vertical: fov.vertical,
-        screenAmount: form.screens,
+        screenAmount: fov.screens,
         tripleScreenAngle: fov.angle,
-        curvedScreenRadius: form.curved ? form.radius / 10 : undefined,
+        screenRadius: fov.screenRadius,
         distance: distance,
         unit: form.distanceUnit,
         carType: CARS[form.car],
@@ -58,8 +57,9 @@ function getForm() {
         distanceUnit: document.getElementById('distanceUnit').value,
         distance: parseFloat(document.getElementById('distance').value),
         screens: parseInt(document.querySelector('input[name="screenType"]:checked').value),
-        curved: parseInt(document.getElementById('curvedScreenRadius').value) >= 500,
-        radius: parseInt(document.getElementById('curvedScreenRadius').value),
+        screenRadius: parseInt(document.getElementById('curvedScreenRadius').value) >= 500
+            ? parseInt(document.getElementById('curvedScreenRadius').value)
+            : undefined,
         bezel: parseInt(document.getElementById('bezelThickness').value),
         car: document.querySelector('input[name="carType"]:checked').value,
     };
@@ -68,11 +68,11 @@ function getForm() {
 function updateForm(form) {
     document.getElementById('screenSizeOutput').textContent = form.size.toFixed(1);
     document.getElementById('distanceOutput').textContent = form.distance;
-    document.getElementById('curvedScreenRadiusOutput').textContent = form.radius;
+    document.getElementById('curvedScreenRadiusOutput').textContent = form.screenRadius;
     document.getElementById('bezelThicknessOutput').textContent = form.bezel;
 
-    document.getElementById('curvedScreenRadiusOutput').style = `display: ${form.radius >= 500 ? 'inline' : 'none'};`;
-    document.getElementById('curvedScreenRadiusOutputFlat').style = `display: ${form.radius < 500 ? 'inline' : 'none'};`;        
+    document.getElementById('curvedScreenRadiusOutput').style = `display: ${!!form.screenRadius ? 'inline' : 'none'};`;
+    document.getElementById('curvedScreenRadiusOutputFlat').style = `display: ${!form.screenRadius ? 'inline' : 'none'};`;        
 }
 
 function gameHtml(label, value) {
@@ -102,38 +102,32 @@ function updateResults(fov) {
     const horizontalGamesDiv = document.getElementById('horizontal-games');
     horizontalGamesDiv.innerHTML = '';
     GAMES.horizontal.forEach(game => {
-        const value = isNaN(fov.horizontal) ? voidSimbol : fovValue(game.type, fov.horizontal, game.factor ?? 1, game.digits ?? 1) + (game.unit ?? '');
+        const value = isNaN(fov.horizontal) ? voidSimbol : fovValue(game.type, fov, 'horizontal', game.factor ?? 1, game.digits ?? 1) + (game.unit ?? '');
         horizontalGamesDiv.appendChild(gameHtml(game.name, value));
     });
 
     const verticalGamesDiv = document.getElementById('vertical-games');
     verticalGamesDiv.innerHTML = '';
     GAMES.vertical.forEach(game => {
-        const value = isNaN(fov.vertical) ? voidSimbol : fovValue(game.type, fov.vertical, game.factor ?? 1, game.digits ?? 1) + (game.unit ?? '');
+        const value = isNaN(fov.vertical) ? voidSimbol : fovValue(game.type, fov, 'vertical', game.factor ?? 1, game.digits ?? 1) + (game.unit ?? '');
         verticalGamesDiv.appendChild(gameHtml(game.name, value));
     });
 }
 
-function fovValue(type, fov, factor, digits) {
+function fovValue(type, fov, fovSide, factor, digits) {
     switch(type){
+        case 'multiplier':
+            return FOV.calculateMultiplier(fov[fovSide], factor).toFixed(digits);
         case 'divider':
-            return fovDivider(fov, factor, digits);
-        case 'radian':
-            return fovRadian(fov, factor, digits);
-        case 'dirt':
-            return fovDirt(fov, factor, digits);
+            return FOV.calculateDivider(fov[fovSide], factor).toFixed(digits);
         case 'f1':
-            return fovF1(fov, factor, digits);
+            return FOV.calculateF1(fov[fovSide], factor).toFixed(digits);
+        case 'rbr':
+            return FOV.calculateRBR(fov.width, fov.distance, fov.ratio).toFixed(digits);
         default:
-            return fovMultiplier(fov, factor, digits);
+            return fov[fovSide];
     }
 }
-
-const fovMultiplier = (fov, factor, digits) => (fov * factor).toFixed(digits);
-const fovDivider = (fov, factor, digits) => (fov / factor).toFixed(digits);
-const fovRadian = (fov, factor, digits) => ((fov / 180 * Math.PI) * factor).toFixed(digits);
-const fovDirt = (fov, factor, digits) => Math.ceil(((fov - 30) / 5) * factor).toFixed(digits);
-const fovF1 = (fov, factor, digits) => ((fov - 77) / 2 * factor).toFixed(digits);
 
 function toggleBezel() {
     const isTriple = document.getElementById('tripleScreen').checked;

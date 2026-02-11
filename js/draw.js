@@ -3,7 +3,7 @@ const ctx = canvas.getContext('2d');
 const carImageCache = {};
 
 function updateDraw(params) {
-    const { ratio, size, width, height, horizontal, vertical, tripleScreenAngle, screenAmount, curvedScreenRadius, distance, unit, carType } = params;    
+    const { ratio, size, width, height, horizontal, vertical, tripleScreenAngle, screenAmount, screenRadius, distance, unit, carType } = params;    
     const carPosition = getCarPosition(carType);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
@@ -17,7 +17,7 @@ function updateDraw(params) {
     }
 
     drawCarImage(carType);
-    drawHorizontalFov(ratio, size, carPosition, carType, width, horizontal, distance, unit, screenAmount, tripleScreenAngle, curvedScreenRadius);
+    drawHorizontalFov(ratio, size, carPosition, carType, width, horizontal, distance, unit, screenAmount, tripleScreenAngle, screenRadius);
     drawVerticalFov(ratio, size, carPosition, carType, height, vertical, distance, unit);
     
     
@@ -61,8 +61,8 @@ function drawCarImage(carType) {
 
     const scale = Math.min(canvasWidth / imageWidth, canvasHeight / imageHeight);
     
-    const x = (canvasWidth - imageWidth * scale) / 2;
-    const y = (canvasHeight - imageHeight * scale) / 2;
+    const x = ((canvasWidth - imageWidth * scale) / 2) + carType.offset.horizontal.shift;
+    const y = ((canvasHeight - imageHeight * scale) / 2) + carType.offset.vertical.shift;
 
     ctx.save();
     ctx.setTransform(1, 0, 0, 1, 0, 0); 
@@ -79,7 +79,7 @@ function drawCarImage(carType) {
     ctx.restore();
 }
 
-function drawHorizontalFov(ratio, size, carPosition, carType, screenSize, fov, distance, unit, screenAmount, tripleScreenAngle, curvedScreenRadius) {
+function drawHorizontalFov(ratio, size, carPosition, carType, screenSize, fov, distance, unit, screenAmount, tripleScreenAngle, screenRadius) {
     const position = {
         x: carPosition.x + (carType.offset.horizontal.x * carType.scale),
         y: carPosition.topY - (carType.offset.horizontal.y * carType.scale)
@@ -93,7 +93,7 @@ function drawHorizontalFov(ratio, size, carPosition, carType, screenSize, fov, d
         distance, 
         screenAmount, 
         tripleScreenAngle, 
-        curvedScreenRadius,
+        screenRadius,
         carType.scale,
         rotation
     );
@@ -125,10 +125,10 @@ function drawVerticalFov(ratio, size, carPosition, carType, screenSize, fov, dis
     drawViewLabel('Vertical FOV', { x: 10, y: (canvas.height / 2) + 30 });
 }
 
-function drawView(center, screenSize, fov, distance, screenAmount, tripleScreenAngle, curvedScreenRadius, scale, rotation) {
+function drawView(center, screenSize, fov, distance, screenAmount, tripleScreenAngle, screenRadius, scale, rotation) {
     const scaledScreenSize = screenSize * scale;
     const scaledDistance = distance * scale;
-    const scaledRadius = curvedScreenRadius * scale;
+    const scaledRadius = screenRadius * scale;
     
     ctx.save();
     ctx.translate(center.x, center.y);
@@ -240,15 +240,15 @@ function drawFOV(fov, distance, isTripleScree) {
     ctx.setLineDash([]);
 }
 
-function drawScreens(amount, screenSize, sideAngle, distance, curvedScreenRadius) {
+function drawScreens(amount, screenSize, sideAngle, distance, screenRadius) {
     const halfWidth = screenSize / 2;
     let sagitta = 0;
-    if (curvedScreenRadius)
-        sagitta = curvedScreenRadius - Math.sqrt(curvedScreenRadius**2 - halfWidth**2);
+    if (screenRadius)
+        sagitta = screenRadius - Math.sqrt(screenRadius**2 - halfWidth**2);
 
     ctx.strokeStyle = DRAW.screenColor;
     ctx.lineWidth = DRAW.screenThickness;
-    drawScreenSegment(0, -distance, screenSize, curvedScreenRadius);
+    drawScreenSegment(0, -distance, screenSize, screenRadius);
 
     if (amount === 3) {
         const sideRad = (sideAngle * Math.PI) / 180;
@@ -257,14 +257,14 @@ function drawScreens(amount, screenSize, sideAngle, distance, curvedScreenRadius
         ctx.translate(-halfWidth, -distance + sagitta); 
         ctx.rotate(-sideRad); 
         ctx.translate(-halfWidth, -sagitta); 
-        drawScreenSegment(0, 0, screenSize, curvedScreenRadius);
+        drawScreenSegment(0, 0, screenSize, screenRadius);
         ctx.restore();
 
         ctx.save();
         ctx.translate(halfWidth, -distance + sagitta);
         ctx.rotate(sideRad);
         ctx.translate(halfWidth, -sagitta);
-        drawScreenSegment(0, 0, screenSize, curvedScreenRadius);
+        drawScreenSegment(0, 0, screenSize, screenRadius);
         ctx.restore();
     }
 }
@@ -302,7 +302,7 @@ function getCarPosition(carType) {
     const height = carType.car.height * carType.scale;
     const length = carType.car.length * carType.scale;
     return {
-        x: (canvas.width - length) / 2,
+        x: ((canvas.width - length) / 2) + carType.offset.horizontal.shift,
         topY: (canvas.height * 0.25) + (width / 2),
         bottomY: canvas.height * 0.75 + (height / 2),
         width,

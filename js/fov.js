@@ -16,21 +16,16 @@
 		 * @param {number} options.size - Diagonal screen size in inches (required)
 		 * @param {number} options.distance - Distance to screen in centimeters (required)
 		 * @param {number} [options.screens=1] - Number of screens
-		 * @param {boolean} [options.curved=false] - Is monitor curved
-		 * @param {number} options.radius - Curve radius in centimeters (required if curved=true)
+		 * @param {number} options.screenRadius - Curve radius in centimeters
 		 * @param {number} options.bezel - Bezel thickness in millimeters (required)
 		 * @returns {Object} Object with calculated FOV values
-		 * @returns {number} returns.horizontalFov - Horizontal FOV in degrees
-		 * @returns {number} returns.verticalFov - Vertical FOV in degrees
-		 * @returns {number} returns.tripleScreenAngle - Single screen angle in degrees
 		 */
 		FOVCalculator.prototype.calculate = function({
 			ratio,
 			size,
 			distance,
 			screens = 1,
-			curved = false,
-			radius,
+			screenRadius,
 			bezel,
 		}) {
 			const screensizeDiagonal = size * this.INCHES_TO_CM;
@@ -38,14 +33,20 @@
 			const aspectRatioToSize = Math.sqrt((screensizeDiagonal * screensizeDiagonal) / ((ratio.h * ratio.h) + (ratio.v * ratio.v)));
 			const actualWidth = (ratio.h * aspectRatioToSize);
 			const actualHeight = (ratio.v * aspectRatioToSize);
-			const hActualAngle = this._calcTriangularAngle(actualWidth, distance);
+			const hActualAngle = this._getAngularSize(actualWidth, distance);
 			const width = (ratio.h * aspectRatioToSize) + (screens > 1 ? bezelCalculated : 0);
-			const hAngle = curved
-				? this._calcCurvedAngle(width, radius, distance)
-				: this._calcTriangularAngle(width, distance);
+			const hAngle = !!screenRadius
+				? this._getArcAngularSize(width, screenRadius, distance)
+				: this._getAngularSize(width, distance);
 			const vAngle = 2 * Math.atan2(Math.tan(hActualAngle / 2) * ratio.v, ratio.h);
 			
 			return {
+				ratio,
+				size,
+				distance,
+				screens,
+				screenRadius,
+				bezel,
 				width: actualWidth,
 				height: actualHeight,
 				horizontal: Math.min(parseFloat((this.ARC_CONSTANT * (hAngle * screens)).toFixed(2)), 360),
@@ -55,29 +56,70 @@
 		};
 
 		/**
+     * Calculates FOV based on a linear multiplier.
+     * Common for Live for Speed or GRID Autosport (vFOV * 2).
+     * @param {number} fov - Base FOV in degrees
+     * @param {number} factor - Multiplication/Scale factor
+     */
+		FOVCalculator.prototype.calculateMultiplier = function(fov, factor) {
+			return (fov * factor);
+		} 
+
+		/**
+     * Calculates FOV using a divisor.
+     * Common for GTR2 or RaceRoom (vFOV / 58)
+     * @param {number} fov - Base FOV in degrees
+     * @param {number} factor - Division factor
+     */
+		FOVCalculator.prototype.calculateDivider = function(fov, factor) {
+			return (fov / factor);
+		}
+
+		/**
+     * Converts vFOV to the slider value for Codemasters/EA F1 games.
+     * Scale logic based on a neutral offset (approx. 77 degrees).
+     * @param {number} fov - FOV in degrees
+     * @param {number} factor - Scaling factor
+     */
+		FOVCalculator.prototype.calculateF1 = function(fov, factor) {
+			return ((fov - 77) / 2 * factor);
+		} 
+
+		/**
+     * Calculates vFOV in radians specifically for Richard Burns Rally (RBR).
+     * RBR uses a specific vertical FOV calculation in radians.
+     * @param {number} width - Screen width in centimeters
+     * @param {number} distance - Distance to screen in centimeters
+     * @param {number} ratio - Horizontal aspect ratio (e.g., { h: 16, v: 9 })
+     */
+    FOVCalculator.prototype.calculateRBR = function(width, distance, ratio) {
+			return this._getAngularSize(width / ratio.h * ratio.v / 3 * 4, distance);
+		}
+
+		/**
 		 * Calculates viewing angle for flat monitors using right triangle geometry.
 		 * @private
-		 * @param {number} base - Screen width in centimeters
+		 * @param {number} width - Screen width in centimeters
 		 * @param {number} distance - Distance from observer to screen in centimeters
 		 * @returns {number} Viewing angle in radians
 		 */
-		FOVCalculator.prototype._calcTriangularAngle = function(base, distance) {
-			return Math.atan2(base / 2, distance) * 2;
+		FOVCalculator.prototype._getAngularSize = function(width, distance) {
+			return Math.atan2(width / 2, distance) * 2;
 		};
 
 		/**
 		 * Calculates viewing angle for curved monitors accounting for arc geometry.
 		 * @private
-		 * @param {number} base - Screen width in centimeters (arc length)
+		 * @param {number} width - Screen width in centimeters (arc length)
 		 * @param {number} radius - Curve radius in centimeters (smaller = more curved)
 		 * @param {number} distance - Distance from observer to screen in centimeters
 		 * @returns {number} Viewing angle in radians
 		 */
-		FOVCalculator.prototype._calcCurvedAngle = function(base, radius, distance) {
-			const arcAngleAtRadius = base / radius;
-			const b = radius * (1 - Math.cos(arcAngleAtRadius / 2));
-			const c = Math.sqrt((2 * radius * b) - (b * b));
-			return 2 * Math.atan2(c, distance - b);
+		FOVCalculator.prototype._getArcAngularSize = function(width, radius, distance) {
+			const centralAngle = width / radius;
+			const sagitta = radius * (1 - Math.cos(centralAngle / 2));
+			const halfChord = Math.sqrt((2 * radius * sagitta) - (sagitta * sagitta));
+			return 2 * Math.atan2(halfChord, distance - sagitta);
 		};
 
 		return FOVCalculator;

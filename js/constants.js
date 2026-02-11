@@ -8,12 +8,13 @@ const GAMES = {
         { name: 'Automobilista 2', factor: 1, digits: 0, unit: '°' },
         { name: 'RaceRoom Racing Experience', factor: 1, digits: 1, unit: '°' },
         { name: 'Assetto Corsa Rally', factor: 1, digits: 0, unit: '°' },
+        { name: 'BeamNG.drive', factor: 1, digits: 1, unit: '°' },
         { name: 'Project CARS 1/2', factor: 1, digits: 0, unit: '°' },
         { name: 'Euro Truck Simulator', factor: 1, digits: 0, unit: '°' },
         { name: 'American Truck Simulator', factor: 1, digits: 0, unit: '°' },
         { name: 'Forza Motorsport', factor: 1, digits: 0, unit: '°' },
         { name: 'Forza Horizon', factor: 1, digits: 0, unit: '°' },
-        { type: 'f1', name: 'F1 2016~2018', factor: 0.05, digits: 2, unit: 'pts' },
+        { type: 'f1', name: 'F1 2016~2018', factor: 0.05, digits: 2, unit: '' },
         { type: 'f1', name: 'F1 2019~2020', factor: 0.1, digits: 1, unit: '' },
         { type: 'f1', name: 'F1 2021+', factor: 1, digits: 0, unit: '' },
     ],
@@ -30,7 +31,7 @@ const GAMES = {
         { name: 'WRC', factor: 1, digits: 0, unit: '°' },
         { type: 'divider', name: 'GTR 2', factor: 58, digits: 1, unit: 'x' },
         { type: 'divider', name: 'Race07', factor: 58, digits: 1, unit: 'x' },
-        { type: 'dirt', name: 'DiRT Rally 1/2', factor: 1, digits: 0 },
+        { type: 'dirt', name: 'DiRT Rally 1/2', factor: 1, digits: 0, unit: '' },
     ],
 }
 

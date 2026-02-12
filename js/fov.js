@@ -33,13 +33,19 @@
 			const aspectRatioToSize = Math.sqrt((screensizeDiagonal * screensizeDiagonal) / ((ratio.h * ratio.h) + (ratio.v * ratio.v)));
 			const actualWidth = (ratio.h * aspectRatioToSize);
 			const actualHeight = (ratio.v * aspectRatioToSize);
-			const hActualAngle = this._getAngularSize(actualWidth, distance);
-			const width = (ratio.h * aspectRatioToSize) + (screens > 1 ? bezelCalculated : 0);
-			const hAngle = !!screenRadius
+			const horizontalActualAngle = this._getAngularSize(actualWidth, distance);
+			const width = ratio.h * aspectRatioToSize;
+			const widthTripleScreen = (ratio.h * aspectRatioToSize) + bezelCalculated;
+			const halfPi = Math.PI / 2;
+			const calculatedHorizontalAngle = !!screenRadius
 				? this._getArcAngularSize(width, screenRadius, distance)
 				: this._getAngularSize(width, distance);
-			const vAngle = 2 * Math.atan2(Math.tan(hActualAngle / 2) * ratio.v, ratio.h);
-			
+			const calculatedTripleHorizontalAngle = !!screenRadius
+				? this._getArcAngularSize(widthTripleScreen, screenRadius, distance)
+				: this._getAngularSize(widthTripleScreen, distance);
+			const horizontalAngle = Math.min(calculatedHorizontalAngle, halfPi);
+			const verticalAngle = 2 * Math.atan2(Math.tan(horizontalActualAngle / 2) * ratio.v, ratio.h);
+
 			return {
 				ratio,
 				size,
@@ -49,9 +55,10 @@
 				bezel,
 				width: actualWidth,
 				height: actualHeight,
-				horizontal: Math.min(parseFloat((this.ARC_CONSTANT * (hAngle * screens)).toFixed(2)), 360),
-				vertical: Math.min(parseFloat((this.ARC_CONSTANT * vAngle).toFixed(2)), 360),
-				angle: Math.min(parseFloat((this.ARC_CONSTANT * hAngle).toFixed(2)), 120)
+				horizontal: Math.min(parseFloat((this.ARC_CONSTANT * calculatedHorizontalAngle).toFixed(2)), 180),
+				tripleScreenFov: Math.min(parseFloat((this.ARC_CONSTANT * (calculatedTripleHorizontalAngle + (horizontalAngle * 2))).toFixed(2)), 360),
+				vertical: Math.min(parseFloat((this.ARC_CONSTANT * verticalAngle).toFixed(2)), 180),
+				angle: Math.min(parseFloat((this.ARC_CONSTANT * horizontalAngle).toFixed(2)), 90)
 			};
 		};
 

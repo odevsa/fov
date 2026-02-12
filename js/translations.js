@@ -85,6 +85,12 @@ async function updatePageLanguage() {
     if (vLabel) vLabel.textContent = trans.verticalFov || 'Vertical FOV';
     const langSelect = document.getElementById('languageSelect');
     if (langSelect) langSelect.value = lang;
+    
+    const videoLabel = document.getElementById('videoLabel');
+    if (videoLabel && trans.tip) videoLabel.innerHTML = trans.videoLabel;
+    const videoText = document.getElementById('videoText');
+    if (videoText && trans.tip) videoText.innerHTML = trans.videoText;
+    
 }
 
 function setLanguage(lang) {

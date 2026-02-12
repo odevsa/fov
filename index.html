@@ -164,6 +164,34 @@
                     <span class="info-icon">i</span>
                     Tip: The distance to the screen is measured from your eye to the center of the screen. Try measuring the approximate distance and adjust as needed for comfort.
                 </div>
+
+
+                <div class="form-group">
+                    <label id="resultsLabel">Results</label>
+                    <div class="box-section" id="resultsSection">
+                        <div class="results-row">
+                            <div class="results-col">
+                                <div class="result-item highlight">
+                                    <div class="result-label" id="horizontalFOVLabel">Horizontal FOV</div>
+                                    <div class="result-value" id="horizontalFOV">-</div>
+                                </div>
+                                <div id="horizontal-games" class="results-col"></div>
+                            </div>
+                            <div class="results-col">
+                                <div class="result-item highlight">
+                                    <div class="result-label" id="verticalFOVLabel">Vertical FOV</div>
+                                    <div class="result-value" id="verticalFOV">-</div>
+                                </div>
+                                <div id="vertical-games" class="results-col"></div>
+                            </div>
+                        </div>
+                        <div class="result-item highlight">
+                            <div class="result-label" id="tripleScreenAngleLabel">Triple Screen Angle</div>
+                            <div class="result-value" id="tripleScreenAngle">-</div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <div class="section">
@@ -194,26 +222,16 @@
                     <canvas class="draw" width="800" height="1000" id="draw"></canvas>
                 </div>
 
-                <div class="results-section" id="resultsSection">
-                    <div class="results-row">
-                        <div class="results-col">
-                            <div class="result-item highlight">
-                                <div class="result-label" id="horizontalFOVLabel">Horizontal FOV</div>
-                                <div class="result-value" id="horizontalFOV">-</div>
-                            </div>
-                            <div id="horizontal-games" class="results-col"></div>
+                <div class="form-group">
+                    <label id="videoLabel">Why calculate FOV?</label>
+                    <div class="box-section" id="videoSection">
+                        <div class="video-container">
+                            <iframe width="560" height="315" src="https://www.youtube.com/embed/AbbxkX7kS_M?si=ZyNc5CBZRMKrsHr0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                         </div>
-                        <div class="results-col">
-                            <div class="result-item highlight">
-                                <div class="result-label" id="verticalFOVLabel">Vertical FOV</div>
-                                <div class="result-value" id="verticalFOV">-</div>
-                            </div>
-                            <div id="vertical-games" class="results-col"></div>
+                        <div class="info-box" id="videoText">
+                            <span class="info-icon">i</span>
+                            Watch this video by Empty Box for an explanation. Basically it's so things in the game look the same size as they would in real life, allowing you to judge distances better.
                         </div>
-                    </div>
-                    <div class="result-item highlight">
-                        <div class="result-label" id="tripleScreenAngleLabel">Triple Screen Angle</div>
-                        <div class="result-value" id="tripleScreenAngle">-</div>
                     </div>
                 </div>
             </div>

@@ -33,5 +33,7 @@
   "carType": "車のタイプ",
   "darkMode": "ダークモード",
   "language": "言語",
-  "select": "選択..."
+  "select": "選択...",
+  "videoLabel": "なぜFOVを計算するのか？",
+  "videoText": "このビデオでは、Empty Boxが、シムレースにおいて数学的に正しい視野角（FOV）が距離の判断と一貫性に不可欠である理由を解説しています。"
 }

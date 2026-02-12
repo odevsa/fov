@@ -33,5 +33,7 @@
   "carType": "차량 종류",
   "darkMode": "다크 모드",
   "language": "언어",
-  "select": "선택..."
+  "select": "선택...",
+  "videoLabel": "왜 FOV를 계산해야 할까요?",
+  "videoText": "이 영상에서 Empty Box는 심 레이싱에서 거리 판단과 일관성을 위해 수학적으로 정확한 시야각(FOV)이 필수적인 이유를 설명합니다."
 }

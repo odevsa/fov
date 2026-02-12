@@ -37,9 +37,10 @@ function calculateFOV() {
     updateDraw({
         ratio: fov.ratio,
         size: fov.size,
-        width: fov.width, 
+        width: fov.width,
         height: fov.height,
-        horizontal: fov.horizontal, 
+        horizontal: fov.horizontal,
+        tripleScreenFov: fov.tripleScreenFov,
         vertical: fov.vertical,
         screenAmount: fov.screens,
         tripleScreenAngle: fov.angle,
@@ -94,8 +95,8 @@ function gameHtml(label, value) {
 
 function updateResults(fov) {
     const voidSimbol = '∞';
-    document.getElementById('horizontalFOV').textContent = isNaN(fov.horizontal) ? voidSimbol: Math.round(fov.horizontal) + '°';
-    document.getElementById('verticalFOV').textContent = isNaN(fov.vertical) ? voidSimbol: Math.round(fov.vertical) + '°';
+    document.getElementById('horizontalFOV').textContent = isNaN(fov.tripleScreenFov ?? fov.horizontal) ? voidSimbol: (fov.tripleScreenFov ?? fov.horizontal).toFixed(1) + '°';
+    document.getElementById('verticalFOV').textContent = isNaN(fov.vertical) ? voidSimbol: fov.vertical.toFixed(1) + '°';
     document.getElementById('tripleScreenAngle').textContent =  isNaN(fov.angle) ? voidSimbol: fov.angle.toFixed(2) + '°';
 
 
@@ -125,7 +126,7 @@ function fovValue(type, fov, fovSide, factor, digits) {
         case 'rbr':
             return FOV.calculateRBR(fov.width, fov.distance, fov.ratio).toFixed(digits);
         default:
-            return fov[fovSide];
+            return fov[fovSide].toFixed(digits);
     }
 }
 

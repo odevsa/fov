@@ -33,5 +33,7 @@
   "carType": "车型",
   "darkMode": "深色模式",
   "language": "语言",
-  "select": "选择..."
+  "select": "选择...",
+  "videoLabel": "为什么要计算 FOV？",
+  "videoText": "在这段视频中，Empty Box 解释了为什么数学上正确的视野 (FOV) 对于模拟赛车中的距离判断和一致性至关重要。"
 }

@@ -33,5 +33,7 @@
   "carType": "Car Type",
   "darkMode": "Dark Mode",
   "language": "Language",
-  "select": "Select..."
+  "select": "Select...",
+  "videoLabel": "Why calculate FOV?",
+  "videoText": "In this video, Empty Box explains why a mathematically correct Field of View (FOV) is essential for distance judgment and consistency in sim racing."
 }

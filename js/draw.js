@@ -3,7 +3,7 @@ const ctx = canvas.getContext('2d');
 const carImageCache = {};
 
 function updateDraw(params) {
-    const { ratio, size, width, height, horizontal, vertical, tripleScreenAngle, screenAmount, screenRadius, distance, unit, carType } = params;    
+    const { ratio, size, width, height, horizontal, vertical, tripleScreenFov, tripleScreenAngle, screenAmount, screenRadius, distance, unit, carType } = params;    
     const carPosition = getCarPosition(carType);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
@@ -17,7 +17,7 @@ function updateDraw(params) {
     }
 
     drawCarImage(carType);
-    drawHorizontalFov(ratio, size, carPosition, carType, width, horizontal, distance, unit, screenAmount, tripleScreenAngle, screenRadius);
+    drawHorizontalFov(ratio, size, carPosition, carType, width, horizontal, tripleScreenFov, distance, unit, screenAmount, tripleScreenAngle, screenRadius);
     drawVerticalFov(ratio, size, carPosition, carType, height, vertical, distance, unit);
     
     
@@ -79,7 +79,7 @@ function drawCarImage(carType) {
     ctx.restore();
 }
 
-function drawHorizontalFov(ratio, size, carPosition, carType, screenSize, fov, distance, unit, screenAmount, tripleScreenAngle, screenRadius) {
+function drawHorizontalFov(ratio, size, carPosition, carType, screenSize, fov, tripleScreenFov, distance, unit, screenAmount, tripleScreenAngle, screenRadius) {
     const position = {
         x: carPosition.x + (carType.offset.horizontal.x * carType.scale),
         y: carPosition.topY - (carType.offset.horizontal.y * carType.scale)
@@ -89,16 +89,17 @@ function drawHorizontalFov(ratio, size, carPosition, carType, screenSize, fov, d
     drawView(
         position,
         screenSize,
-        fov, 
-        distance, 
-        screenAmount, 
-        tripleScreenAngle, 
+        fov,
+        tripleScreenFov,
+        distance,
+        screenAmount,
+        tripleScreenAngle,
         screenRadius,
         carType.scale,
         rotation
     );
 
-    drawMeasurements(position, ratio, size, fov, distance, unit, carType.scale, rotation);
+    drawMeasurements(position, ratio, size, tripleScreenFov ?? fov, distance, unit, carType.scale, rotation);
     drawViewLabel('Horizontal FOV', { x: 10, y: 30 });
 }
 
@@ -111,9 +112,10 @@ function drawVerticalFov(ratio, size, carPosition, carType, screenSize, fov, dis
 
     drawView(
         position,
-        screenSize, 
-        fov, 
-        distance, 
+        screenSize,
+        fov,
+        undefined,
+        distance,
         1,
         0,
         undefined,
@@ -125,7 +127,7 @@ function drawVerticalFov(ratio, size, carPosition, carType, screenSize, fov, dis
     drawViewLabel('Vertical FOV', { x: 10, y: (canvas.height / 2) + 30 });
 }
 
-function drawView(center, screenSize, fov, distance, screenAmount, tripleScreenAngle, screenRadius, scale, rotation) {
+function drawView(center, screenSize, fov, tripleScreenFov, distance, screenAmount, tripleScreenAngle, screenRadius, scale, rotation) {
     const scaledScreenSize = screenSize * scale;
     const scaledDistance = distance * scale;
     const scaledRadius = screenRadius * scale;
@@ -134,7 +136,7 @@ function drawView(center, screenSize, fov, distance, screenAmount, tripleScreenA
     ctx.translate(center.x, center.y);
     if (rotation) ctx.rotate(rotation);
     
-    drawFOV(fov, scaledDistance, screenAmount == 3);
+    drawFOV(fov, tripleScreenFov, scaledDistance, screenAmount == 3);
     drawScreens(screenAmount, scaledScreenSize, tripleScreenAngle, scaledDistance, scaledRadius);
     drawUserPosition();
     ctx.restore();
@@ -197,9 +199,8 @@ function drawMeasurements(position, ratio, size, fov, distance, unit, scale, rot
     ctx.restore();
 }
 
-function drawFOV(fov, distance, isTripleScree) {
-    const fovPerScreen = isTripleScree ? fov / 3 : fov;
-    const fovRadians = (fovPerScreen * Math.PI) / 180;
+function drawFOV(fov, tripleScreenFov, distance, isTripleScree) {
+    const fovRadians = (fov * Math.PI) / 180;
     const baseX = distance * Math.tan(fovRadians / 2);
     const drawX = baseX * DRAW.fovMultiplier;
     const drawDistance = distance * DRAW.fovMultiplier;
@@ -224,9 +225,9 @@ function drawFOV(fov, distance, isTripleScree) {
     ctx.stroke();
     
     if(isTripleScree){
-        const fovRadians = (fov * Math.PI) / 180;
-        const baseTripleX = drawDistance * Math.tan(fovRadians / 2);
-        const direction = fov > 180 ? 1 : -1;
+        const tripleFovRadians = (tripleScreenFov * Math.PI) / 180;
+        const baseTripleX = drawDistance * Math.tan(tripleFovRadians / 2);
+        const direction = tripleScreenFov > 180 ? 1 : -1;
 
         ctx.strokeStyle = 'RGB(255, 255, 255)';
         ctx.beginPath();

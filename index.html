@@ -1,248 +1,405 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FOV Calculator</title>
-    <meta name="description" content="Calculate the ideal field of view (FOV) for racing simulators. Supports flat and curved monitors, single and triple screen setups with accurate trigonometric calculations.">
-    <meta name="keywords" content="FOV calculator, field of view, racing simulator, racing games, monitor FOV, curved monitor, triple screen, Project CARS, Assetto Corsa, iRacing">
-    <meta name="author" content="FOV Calculator">
-    <meta name="robots" content="index, follow">
-    <meta name="language" content="English">
-    <meta name="theme-color" content="#1a0033">
-    
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="icon" href="data:image/svg+xml,
+    <meta
+      name="description"
+      content="Calculate the ideal field of view (FOV) for racing simulators. Supports flat and curved monitors, single and triple screen setups with accurate trigonometric calculations."
+    />
+    <meta
+      name="keywords"
+      content="FOV calculator, field of view, racing simulator, racing games, monitor FOV, curved monitor, triple screen, Project CARS, Assetto Corsa, iRacing"
+    />
+    <meta name="author" content="FOV Calculator" />
+    <meta name="robots" content="index, follow" />
+    <meta name="language" content="English" />
+    <meta name="theme-color" content="#1a0033" />
+
+    <link rel="stylesheet" href="css/style.css" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,
         <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>
             <style>
                 text { fill: black; } 
                 @media (prefers-color-scheme: dark) { text { fill: white; } }
             </style>
             <text y='.9em' font-size='90'>⎚</text>
-        </svg>">
-</head>
-<body>
+        </svg>"
+    />
+  </head>
+  <body>
     <div class="container">
-        <div class="top-controls">
-            <div class="top-content">
-                <div class="control-group">
-                    <label for="languageSelect">🌐</label>
-                    <select id="languageSelect">
-                        <option value="en">English</option>
-                        <option value="pt-BR">Português (Brasil)</option>
-                        <option value="es">Español</option>
-                        <option value="fr">Français</option>
-                        <option value="de">Deutsch</option>
-                        <option value="it">Italiano</option>
-                        <option value="ja">日本語</option>
-                        <option value="zh-CN">中文 (简体)</option>
-                        <option value="ru">Русский</option>
-                        <option value="ko">한국어</option>
-                    </select>
-                </div>
-                <button id="themeToggle">🌙 Dark</button>
+      <div class="top-controls">
+        <div class="top-content">
+          <div class="control-group">
+            <label for="languageSelect">🌐</label>
+            <select id="languageSelect">
+              <option value="en">English</option>
+              <option value="pt-BR">Português (Brasil)</option>
+              <option value="es">Español</option>
+              <option value="fr">Français</option>
+              <option value="de">Deutsch</option>
+              <option value="it">Italiano</option>
+              <option value="ja">日本語</option>
+              <option value="zh-CN">中文 (简体)</option>
+              <option value="ru">Русский</option>
+              <option value="ko">한국어</option>
+            </select>
+          </div>
+          <button id="themeToggle">🌙 Dark</button>
+        </div>
+      </div>
+
+      <div class="header">
+        <h1 id="headerTitle">⎚ FOV Calculator</h1>
+        <p id="headerSubtitle">
+          Calculate the ideal field of view for racing simulators
+        </p>
+      </div>
+
+      <div class="content">
+        <div class="section">
+          <div class="form-group">
+            <label id="screenTypeLabel">Setup Type</label>
+            <div class="radio-group">
+              <div class="radio-option" for="singleScreen">
+                <input
+                  type="radio"
+                  id="singleScreen"
+                  name="screenType"
+                  value="1"
+                  checked
+                />
+                <label for="singleScreen"
+                  >⎚<br /><span id="singleScreenLabel"
+                    >Single Screen</span
+                  ></label
+                >
+              </div>
+              <div class="radio-option" for="tripleScreen">
+                <input
+                  type="radio"
+                  id="tripleScreen"
+                  name="screenType"
+                  value="3"
+                />
+                <label for="tripleScreen"
+                  >⎚⎚⎚<br /><span id="tripleScreenLabel"
+                    >Triple Screen</span
+                  ></label
+                >
+              </div>
             </div>
+          </div>
+
+          <div class="form-group">
+            <label id="screenRatioLabel">Setup Type</label>
+            <div class="radio-col">
+              <div class="radio-group">
+                <div class="radio-option" for="screenRatio169">
+                  <input
+                    type="radio"
+                    id="screenRatio169"
+                    name="screenRatio"
+                    value="16:9"
+                    checked
+                  />
+                  <label for="screenRatio169">16:9</label>
+                </div>
+                <div class="radio-option" for="screenRatio1610">
+                  <input
+                    type="radio"
+                    id="screenRatio1610"
+                    name="screenRatio"
+                    value="16:10"
+                  />
+                  <label for="screenRatio1610">16:10</label>
+                </div>
+                <div class="radio-option" for="screenRatio219">
+                  <input
+                    type="radio"
+                    id="screenRatio219"
+                    name="screenRatio"
+                    value="21:9"
+                  />
+                  <label for="screenRatio219">21:9</label>
+                </div>
+                <div class="radio-option" for="screenRatio2410">
+                  <input
+                    type="radio"
+                    id="screenRatio2410"
+                    name="screenRatio"
+                    value="24:10"
+                  />
+                  <label for="screenRatio2410">24:10</label>
+                </div>
+              </div>
+              <div class="radio-group">
+                <div class="radio-option" for="screenRatio329">
+                  <input
+                    type="radio"
+                    id="screenRatio329"
+                    name="screenRatio"
+                    value="32:9"
+                  />
+                  <label for="screenRatio329">32:9</label>
+                </div>
+                <div class="radio-option" for="screenRatio3210">
+                  <input
+                    type="radio"
+                    id="screenRatio3210"
+                    name="screenRatio"
+                    value="32:10"
+                  />
+                  <label for="screenRatio3210">32:10</label>
+                </div>
+                <div class="radio-option" for="screenRatio54">
+                  <input
+                    type="radio"
+                    id="screenRatio54"
+                    name="screenRatio"
+                    value="5:4"
+                  />
+                  <label for="screenRatio54">5:4</label>
+                </div>
+                <div class="radio-option" for="screenRatio43">
+                  <input
+                    type="radio"
+                    id="screenRatio43"
+                    name="screenRatio"
+                    value="4:3"
+                  />
+                  <label for="screenRatio43">4:3</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="screenSize" id="screenSizeLabel"> Screen Size </label>
+            <div class="input-wrapper">
+              <span class="value" id="screenSizeOutput">&nbsp;</span>
+              <button class="step" onclick="decrease('screenSize')">━</button>
+              <input
+                type="range"
+                id="screenSize"
+                min="10"
+                max="100"
+                step="0.5"
+                value="32"
+              />
+              <button class="step" onclick="increase('screenSize')">✚</button>
+              <span class="unit" id="inchesUnit">inches</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label id="distanceLabel">Distance to Screen</label>
+            <div class="input-wrapper">
+              <span class="value" id="distanceOutput">&nbsp;</span>
+              <button class="step" onclick="decrease('distance')">━</button>
+              <input
+                type="range"
+                id="distance"
+                min="25"
+                max="200"
+                step="1"
+                value="60"
+              />
+              <button class="step" onclick="increase('distance')">✚</button>
+              <select id="distanceUnit">
+                <option value="cm">cm</option>
+                <option value="inch">inches</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group" id="radiusGroup">
+            <label for="curvedScreenRadius" id="curvedScreenRadiusOutputLabel"
+              >Curved Screen</label
+            >
+            <div class="input-wrapper">
+              <div class="value">
+                <span id="curvedScreenRadiusOutput"></span>
+                <span id="curvedScreenRadiusOutputFlat">Flat</span>
+              </div>
+              <button class="step" onclick="decrease('curvedScreenRadius')">
+                ━
+              </button>
+              <input
+                type="range"
+                id="curvedScreenRadius"
+                min="400"
+                max="3000"
+                step="100"
+                value="0"
+              />
+              <button class="step" onclick="increase('curvedScreenRadius')">
+                ✚
+              </button>
+              <span class="unit">mm</span>
+            </div>
+          </div>
+
+          <div class="form-group hidden" id="bezelGroup">
+            <label for="bezelThickness" id="bezelLabel"
+              >Bezel Thickness for Triple Screen</label
+            >
+            <div class="input-wrapper">
+              <span class="value" id="bezelThicknessOutput">&nbsp;</span>
+              <button class="step" onclick="decrease('bezelThickness')">
+                ━
+              </button>
+              <input
+                type="range"
+                id="bezelThickness"
+                min="0"
+                max="100"
+                step="1"
+                value="0"
+              />
+              <button class="step" onclick="increase('bezelThickness')">
+                ✚
+              </button>
+              <span class="unit">mm</span>
+            </div>
+          </div>
+
+          <div class="info-box" id="infoText">
+            <span class="info-icon">i</span>
+            Tip: The distance to the screen is measured from your eye to the
+            center of the screen. Try measuring the approximate distance and
+            adjust as needed for comfort.
+          </div>
+
+          <div class="form-group">
+            <label id="resultsLabel">Results</label>
+            <div class="box-section" id="resultsSection">
+              <div class="results-row">
+                <div class="results-col">
+                  <div class="result-item highlight">
+                    <div class="result-label" id="horizontalFOVLabel">
+                      Horizontal FOV
+                    </div>
+                    <div class="result-value" id="horizontalFOV">-</div>
+                  </div>
+                  <div id="horizontal-games" class="results-col"></div>
+                </div>
+                <div class="results-col">
+                  <div class="result-item highlight">
+                    <div class="result-label" id="verticalFOVLabel">
+                      Vertical FOV
+                    </div>
+                    <div class="result-value" id="verticalFOV">-</div>
+                  </div>
+                  <div id="vertical-games" class="results-col"></div>
+                </div>
+              </div>
+              <div class="result-item highlight">
+                <div class="result-label" id="tripleScreenAngleLabel">
+                  Triple Screen Angle
+                </div>
+                <div class="result-value" id="tripleScreenAngle">-</div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="header">
-            <h1 id="headerTitle">⎚ FOV Calculator</h1>
-            <p id="headerSubtitle">Calculate the ideal field of view for racing simulators</p>
-        </div>
-
-        <div class="content">
-            <div class="section">
-                <div class="form-group">
-                    <label id="screenTypeLabel">Setup Type</label>
-                    <div class="radio-group">
-                        <div class="radio-option" for="singleScreen">
-                            <input type="radio" id="singleScreen" name="screenType" value="1" checked>
-                            <label for="singleScreen">⎚<br /><span id="singleScreenLabel">Single Screen</span></label>
-                        </div>
-                        <div class="radio-option" for="tripleScreen">
-                            <input type="radio" id="tripleScreen" name="screenType" value="3">
-                            <label for="tripleScreen">⎚⎚⎚<br /><span id="tripleScreenLabel">Triple Screen</span></label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label id="screenRatioLabel">Setup Type</label>
-                    <div class="radio-col">
-                        <div class="radio-group">
-                            <div class="radio-option" for="screenRatio169">
-                                <input type="radio" id="screenRatio169" name="screenRatio" value="16:9" checked>
-                                <label for="screenRatio169">16:9</label>
-                            </div>
-                            <div class="radio-option" for="screenRatio1610">
-                                <input type="radio" id="screenRatio1610" name="screenRatio" value="16:10">
-                                <label for="screenRatio1610">16:10</label>
-                            </div>
-                            <div class="radio-option" for="screenRatio219">
-                                <input type="radio" id="screenRatio219" name="screenRatio" value="21:9">
-                                <label for="screenRatio219">21:9</label>
-                            </div>
-                            <div class="radio-option" for="screenRatio2410">
-                                <input type="radio" id="screenRatio2410" name="screenRatio" value="24:10">
-                                <label for="screenRatio2410">24:10</label>
-                            </div>
-                        </div>
-                        <div class="radio-group">
-                            <div class="radio-option" for="screenRatio329">
-                                <input type="radio" id="screenRatio329" name="screenRatio" value="32:9">
-                                <label for="screenRatio329">32:9</label>
-                            </div>
-                            <div class="radio-option" for="screenRatio3210">
-                                <input type="radio" id="screenRatio3210" name="screenRatio" value="32:10">
-                                <label for="screenRatio3210">32:10</label>
-                            </div>
-                            <div class="radio-option" for="screenRatio54">
-                                <input type="radio" id="screenRatio54" name="screenRatio" value="5:4">
-                                <label for="screenRatio54">5:4</label>
-                            </div>
-                            <div class="radio-option" for="screenRatio43">
-                                <input type="radio" id="screenRatio43" name="screenRatio" value="4:3">
-                                <label for="screenRatio43">4:3</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="screenSize" id="screenSizeLabel">
-                        Screen Size
-                    </label>
-                    <div class="input-wrapper">
-                        <span class="value" id="screenSizeOutput">&nbsp;</span>
-                        <button class="step" onclick="decrease('screenSize')">━</button>
-                        <input type="range" id="screenSize" min="10" max="100" step="0.5" value="32">
-                        <button class="step" onclick="increase('screenSize')">✚</button>
-                        <span class="unit" id="inchesUnit">inches</span>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label id="distanceLabel">Distance to Screen</label>
-                    <div class="input-wrapper">
-                        <span class="value" id="distanceOutput">&nbsp;</span>
-                        <button class="step" onclick="decrease('distance')">━</button>
-                        <input type="range" id="distance" min="25" max="200" step="1" value="60">
-                        <button class="step" onclick="increase('distance')">✚</button>
-                        <select id="distanceUnit">
-                            <option value="cm">cm</option>
-                            <option value="inch">inches</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-group" id="radiusGroup">
-                    <label for="curvedScreenRadius" id="curvedScreenRadiusOutputLabel">Curved Screen</label>
-                    <div class="input-wrapper">
-                        <div class="value">
-                            <span id="curvedScreenRadiusOutput"></span>
-                            <span id="curvedScreenRadiusOutputFlat">Flat</span>
-                        </div>
-                        <button class="step" onclick="decrease('curvedScreenRadius')">━</button>
-                        <input type="range" id="curvedScreenRadius" min="400" max="3000" step="100" value="0">
-                        <button class="step" onclick="increase('curvedScreenRadius')">✚</button>
-                        <span class="unit">mm</span>
-                    </div>
-                </div>
-                
-                <div class="form-group hidden" id="bezelGroup">
-                    <label for="bezelThickness" id="bezelLabel">Bezel Thickness for Triple Screen</label>
-                    <div class="input-wrapper">
-                        <span class="value" id="bezelThicknessOutput">&nbsp;</span>
-                        <button class="step" onclick="decrease('bezelThickness')">━</button>
-                        <input type="range" id="bezelThickness" min="0" max="100" step="1" value="0">
-                        <button class="step" onclick="increase('bezelThickness')">✚</button>
-                        <span class="unit">mm</span>
-                    </div>
-                </div>
-
-
-                <div class="info-box" id="infoText">
-                    <span class="info-icon">i</span>
-                    Tip: The distance to the screen is measured from your eye to the center of the screen. Try measuring the approximate distance and adjust as needed for comfort.
-                </div>
-
-
-                <div class="form-group">
-                    <label id="resultsLabel">Results</label>
-                    <div class="box-section" id="resultsSection">
-                        <div class="results-row">
-                            <div class="results-col">
-                                <div class="result-item highlight">
-                                    <div class="result-label" id="horizontalFOVLabel">Horizontal FOV</div>
-                                    <div class="result-value" id="horizontalFOV">-</div>
-                                </div>
-                                <div id="horizontal-games" class="results-col"></div>
-                            </div>
-                            <div class="results-col">
-                                <div class="result-item highlight">
-                                    <div class="result-label" id="verticalFOVLabel">Vertical FOV</div>
-                                    <div class="result-value" id="verticalFOV">-</div>
-                                </div>
-                                <div id="vertical-games" class="results-col"></div>
-                            </div>
-                        </div>
-                        <div class="result-item highlight">
-                            <div class="result-label" id="tripleScreenAngleLabel">Triple Screen Angle</div>
-                            <div class="result-value" id="tripleScreenAngle">-</div>
-                        </div>
-                    </div>
-                </div>
-
+        <div class="section">
+          <div class="form-group">
+            <label id="carTypeLabel">Car Type</label>
+            <div class="radio-group">
+              <div class="radio-option" for="carTypeDrift">
+                <input
+                  type="radio"
+                  id="carTypeDrift"
+                  name="carType"
+                  value="drift"
+                  checked
+                />
+                <label for="carTypeDrift">Drift</label>
+              </div>
+              <div class="radio-option" for="carTypeGt3">
+                <input
+                  type="radio"
+                  id="carTypeGt3"
+                  name="carType"
+                  value="gt3"
+                />
+                <label for="carTypeGt3">GT3</label>
+              </div>
+              <div class="radio-option" for="carTypeF1">
+                <input type="radio" id="carTypeF1" name="carType" value="f1" />
+                <label for="carTypeF1">F1</label>
+              </div>
+              <div class="radio-option" for="carTypeTruck">
+                <input
+                  type="radio"
+                  id="carTypeTruck"
+                  name="carType"
+                  value="truck"
+                />
+                <label for="carTypeTruck">Truck</label>
+              </div>
             </div>
+          </div>
 
-            <div class="section">
-                <div class="form-group">
-                    <label id="carTypeLabel">Car Type</label>
-                    <div class="radio-group">
-                        <div class="radio-option" for="carTypeDrift">
-                            <input type="radio" id="carTypeDrift" name="carType" value="drift" checked>
-                            <label for="carTypeDrift">Drift</label>
-                        </div>
-                        <div class="radio-option" for="carTypeGt3">
-                            <input type="radio" id="carTypeGt3" name="carType" value="gt3">
-                            <label for="carTypeGt3">GT3</label>
-                        </div>
-                        <div class="radio-option" for="carTypeF1">
-                            <input type="radio" id="carTypeF1" name="carType" value="f1">
-                            <label for="carTypeF1">F1</label>
-                        </div>
-                        <div class="radio-option" for="carTypeTruck">
-                            <input type="radio" id="carTypeTruck" name="carType" value="truck">
-                            <label for="carTypeTruck">Truck</label>
-                        </div>
-                    </div>
-                </div>
+          <div class="draw-container">
+            <button class="save" onclick="saveDraw()">💾</button>
+            <canvas class="draw" width="800" height="1000" id="draw"></canvas>
+          </div>
 
-                <div class="draw-container">
-                    <button class="save" onclick="saveDraw()">💾</button>
-                    <canvas class="draw" width="800" height="1000" id="draw"></canvas>
-                </div>
-
-                <div class="form-group">
-                    <label id="videoLabel">Why calculate FOV?</label>
-                    <div class="box-section" id="videoSection">
-                        <div class="video-container">
-                            <iframe width="560" height="315" src="https://www.youtube.com/embed/AbbxkX7kS_M?si=ZyNc5CBZRMKrsHr0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-                        </div>
-                        <div class="info-box" id="videoText">
-                            <span class="info-icon">i</span>
-                            Watch this video by Empty Box for an explanation. Basically it's so things in the game look the same size as they would in real life, allowing you to judge distances better.
-                        </div>
-                    </div>
-                </div>
+          <div class="form-group">
+            <label id="videoLabel">Why calculate FOV?</label>
+            <div class="box-section" id="videoSection">
+              <div class="video-container">
+                <iframe
+                  width="560"
+                  height="315"
+                  src="https://www.youtube.com/embed/AbbxkX7kS_M?si=ZyNc5CBZRMKrsHr0"
+                  title="YouTube video player"
+                  frameborder="0"
+                  allow="
+                    accelerometer;
+                    autoplay;
+                    clipboard-write;
+                    encrypted-media;
+                    gyroscope;
+                    picture-in-picture;
+                    web-share;
+                  "
+                  referrerpolicy="strict-origin-when-cross-origin"
+                  allowfullscreen
+                ></iframe>
+              </div>
+              <div class="info-box" id="videoText">
+                <span class="info-icon">i</span>
+                Watch this video by Empty Box for an explanation. Basically it's
+                so things in the game look the same size as they would in real
+                life, allowing you to judge distances better.
+              </div>
             </div>
+          </div>
         </div>
-        
-        <footer class="footer">
-            <a href="https://github.com/odevsa/fov" target="_blank" rel="noopener noreferrer">
-                <svg height="24" viewBox="0 0 16 16" width="24" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
-                <span>github.com/odevsa/fov</span>
-            </a>
-        </footer>
+      </div>
+
+      <footer class="footer">
+        <a
+          href="https://github.com/odevsa/fov"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <svg height="24" viewBox="0 0 16 16" width="24" fill="currentColor">
+            <path
+              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
+            ></path>
+          </svg>
+          <span>github.com/odevsa/fov</span>
+        </a>
+      </footer>
     </div>
 
     <script src="js/constants.js"></script>
@@ -251,5 +408,5 @@
     <script src="js/draw.js"></script>
     <script src="js/fov.js"></script>
     <script src="js/script.js"></script>
-</body>
+  </body>
 </html>

@@ -37,17 +37,24 @@
 			const actualWidth = (ratio.h * aspectRatioToSize);
 			const actualHeight = (ratio.v * aspectRatioToSize);
 			const calculatedWidth = (ratio.h * aspectRatioToSize) + (isTripleScreen ? bezel : 0);
-			const invertedDistance = actualWidth - distance;
-			
+		
 			const calculatedHorizontalAngle = this.getAngularSize(calculatedWidth, distance, screenRadius);
 			const horizontalAngle = Math.min(calculatedHorizontalAngle, this.HALF_PI);
 
 			const horizontalActualAngle = this.getAngularSize(actualWidth, distance);
 			const verticalAngle = 2 * Math.atan2(Math.tan(horizontalActualAngle / 2) * ratio.v, ratio.h);
 			
-			const calculatedTripleHorizontalAngle = calculatedHorizontalAngle > this.HALF_PI
-				? this.DOUBLE_PI - this.getAngularSize(calculatedWidth - ((isTripleScreen ? bezel : 0)), invertedDistance, screenRadius)
-				: calculatedHorizontalAngle * 3;
+			let calculatedTripleHorizontalAngle;
+			if (calculatedHorizontalAngle > this.HALF_PI) {
+				const sagitta = screenRadius ? screenRadius * (1 - Math.cos((actualWidth / screenRadius) / 2)) : 0;
+				const invertedDistance = actualWidth - distance + sagitta;
+				calculatedTripleHorizontalAngle = this.DOUBLE_PI - this.getAngularSize(calculatedWidth - ((isTripleScreen ? bezel : 0)), invertedDistance);
+			} else {
+				const halfFOV = calculatedHorizontalAngle / 2;
+				calculatedTripleHorizontalAngle = isTripleScreen 
+					? 2 * (horizontalAngle + halfFOV)
+					: calculatedHorizontalAngle * 3;
+			}
 
 			return {
 				ratio,

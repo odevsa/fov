@@ -32,10 +32,11 @@
 		}) {
 			const screensizeDiagonal = size * this.INCHES_TO_CM;
 			const aspectRatioToSize = Math.sqrt((screensizeDiagonal * screensizeDiagonal) / ((ratio.h * ratio.h) + (ratio.v * ratio.v)));
+			const isTripleScreen = screens == 3;
 			
 			const actualWidth = (ratio.h * aspectRatioToSize);
 			const actualHeight = (ratio.v * aspectRatioToSize);
-			const calculatedWidth = (ratio.h * aspectRatioToSize) + (screens > 1 ? bezel : 0);
+			const calculatedWidth = (ratio.h * aspectRatioToSize) + (isTripleScreen ? bezel : 0);
 			const invertedDistance = actualWidth - distance;
 			
 			const calculatedHorizontalAngle = this.getAngularSize(calculatedWidth, distance, screenRadius);
@@ -45,7 +46,7 @@
 			const verticalAngle = 2 * Math.atan2(Math.tan(horizontalActualAngle / 2) * ratio.v, ratio.h);
 			
 			const calculatedTripleHorizontalAngle = calculatedHorizontalAngle > this.HALF_PI
-				? this.DOUBLE_PI - this.getAngularSize(calculatedWidth - ((screens > 1 ? bezel * 2 : 0)), invertedDistance, screenRadius)
+				? this.DOUBLE_PI - this.getAngularSize(calculatedWidth - ((isTripleScreen ? bezel : 0)), invertedDistance, screenRadius)
 				: calculatedHorizontalAngle * 3;
 
 			return {
@@ -57,11 +58,36 @@
 				bezel,
 				width: actualWidth,
 				height: actualHeight,
-				horizontal: Math.min(parseFloat((this.ARC_CONSTANT * calculatedHorizontalAngle).toFixed(2)), 180),
-				tripleScreen: screens > 1 ? Math.min(parseFloat((this.ARC_CONSTANT * calculatedTripleHorizontalAngle).toFixed(2)), 360) : undefined,
-				vertical: Math.min(parseFloat((this.ARC_CONSTANT * verticalAngle).toFixed(2)), 180),
-				angle: Math.min(parseFloat((this.ARC_CONSTANT * horizontalAngle).toFixed(2)), 90)
+				horizontal: Math.min(this.radianToDegree(calculatedHorizontalAngle), 180),
+				tripleScreen: isTripleScreen ? Math.min(this.radianToDegree(calculatedTripleHorizontalAngle), 360) : undefined,
+				vertical: Math.min(this.radianToDegree(verticalAngle), 180),
+				angle: isTripleScreen ? Math.min(this.radianToDegree(horizontalAngle), 90) : undefined
 			};
+		};
+
+		/**
+		 * Calculates viewing angle for flat or curved monitors accounting for arc geometry.
+		 * @param {number} width - Screen width in centimeters (arc length)
+		 * @param {number} radius - Curve radius in centimeters (smaller = more curved)
+		 * @param {number} distance - Distance from observer to screen in centimeters
+		 * @returns {number} Viewing angle in radians
+		 */
+		FOVCalculator.prototype.getAngularSize = function(width, distance, radius = undefined) {
+			if(!radius) return Math.atan2(width / 2, distance) * 2;
+
+			const centralAngle = width / radius;
+			const sagitta = radius * (1 - Math.cos(centralAngle / 2));
+			const halfChord = Math.sqrt((2 * radius * sagitta) - (sagitta * sagitta));
+			return 2 * Math.atan2(halfChord, distance - sagitta);
+		};
+
+		/**
+		 * Convert radians to degrees.
+		 * @param {number} radian - Value in radians
+		 * @returns {number} Angle in degrees
+		 */
+		FOVCalculator.prototype.radianToDegree = function(radian) {
+			return parseFloat((radian * this.ARC_CONSTANT).toFixed(2));
 		};
 
 		/**
@@ -104,22 +130,6 @@
     FOVCalculator.prototype.calculateRBR = function(width, distance, ratio) {
 			return this.getAngularSize(width / ratio.h * ratio.v / 3 * 4, distance);
 		}
-
-		/**
-		 * Calculates viewing angle for flat or curved monitors accounting for arc geometry.
-		 * @param {number} width - Screen width in centimeters (arc length)
-		 * @param {number} radius - Curve radius in centimeters (smaller = more curved)
-		 * @param {number} distance - Distance from observer to screen in centimeters
-		 * @returns {number} Viewing angle in radians
-		 */
-		FOVCalculator.prototype.getAngularSize = function(width, distance, radius = undefined) {
-			if(!radius) return Math.atan2(width / 2, distance) * 2;
-
-			const centralAngle = width / radius;
-			const sagitta = radius * (1 - Math.cos(centralAngle / 2));
-			const halfChord = Math.sqrt((2 * radius * sagitta) - (sagitta * sagitta));
-			return 2 * Math.atan2(halfChord, distance - sagitta);
-		};
 
 		return FOVCalculator;
 

@@ -213,13 +213,13 @@ function resize() {
   const videoSectionParent = videoSection.parentElement;
 
   if (window.innerWidth <= 768) {
-    if (videoSectionParent.id === "video-mobile") return;
-    document.getElementById("video-mobile").appendChild(videoSection);
+    if (videoSectionParent.id === "right-column") return;
+    document.getElementById("right-column").appendChild(videoSection);
     return;
   }
 
-  if (videoSectionParent.id === "video-web") return;
-  document.getElementById("video-web").appendChild(videoSection);
+  if (videoSectionParent.id === "left-column") return;
+  document.getElementById("left-column").appendChild(videoSection);
 }
 
 document.addEventListener("DOMContentLoaded", () => {

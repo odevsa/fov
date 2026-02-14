@@ -145,21 +145,6 @@ body {
   gap: 20px;
 }
 
-@media (max-width: 768px) {
-  .content {
-    grid-template-columns: 1fr;
-    gap: 30px;
-  }
-
-  .top-controls {
-    justify-content: center;
-  }
-
-  .control-group select {
-    width: 100%;
-  }
-}
-
 .video-container {
   width: 100%;
   aspect-ratio: 16 / 9;
@@ -538,6 +523,14 @@ button {
   color: var(--accent-primary);
 }
 
+.mobile-show {
+  display: none;
+}
+
+.mobile-hide {
+  display: block;
+}
+
 @media (max-width: 900px) {
   .results-row {
     flex-direction: column;
@@ -545,11 +538,32 @@ button {
 }
 
 @media (max-width: 768px) {
+  .content {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .top-controls {
+    justify-content: center;
+  }
+
+  .control-group select {
+    width: 100%;
+  }
+
   .header h1 {
     font-size: 1.8rem;
   }
 
   .container {
     padding: 20px;
+  }
+
+  .mobile-show {
+    display: block;
+  }
+
+  .mobile-hide {
+    display: none;
   }
 }

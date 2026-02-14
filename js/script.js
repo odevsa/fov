@@ -208,7 +208,24 @@ function decrease(id) {
   range.dispatchEvent(event);
 }
 
+function resize() {
+  const videoSection = document.getElementById("video-section");
+  const videoSectionParent = videoSection.parentElement;
+
+  if (window.innerWidth <= 768) {
+    if (videoSectionParent.id === "video-mobile") return;
+    document.getElementById("video-mobile").appendChild(videoSection);
+    return;
+  }
+
+  if (videoSectionParent.id === "video-web") return;
+  document.getElementById("video-web").appendChild(videoSection);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+  window.addEventListener("load", resize);
+  window.addEventListener("resize", resize);
+
   document.querySelectorAll('input[name="screenRatio"]').forEach((radio) => {
     radio.addEventListener("change", calculateFOV);
   });
